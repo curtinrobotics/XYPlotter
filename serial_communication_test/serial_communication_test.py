@@ -12,7 +12,7 @@ arduino = serial.Serial(port=COM_PORT, baudrate=9600, timeout=.1)
 
 # Main
 while True:
-    num = input("Enter a number: ")
+    num = input("on/off: ")
     arduino.write(bytes(num, 'utf-8'))
     time.sleep(.05)
     data = arduino.readline()

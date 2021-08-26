@@ -2,6 +2,8 @@
 gCodeConverter - convert svg file to g-code
 
 """
+# Libraries
+from gCodeConverterObjects import *
 
 # Functions
 def get_obj_data(objData):
@@ -36,11 +38,15 @@ def create_shape(shapeName, shapeDataDict, gData):
     # Note: some objects may not exist
     # Case for each object
     if shapeName == "rect":
-        newShape = Rectangle()
+        newShape = Rect()
         for item in gData:
             newShape.add(item, gData[item])
         for item in shapeDataDict:
-            newShape.add(item, shapeDataDict[item])
+            itemAdded = newShape.add(item, shapeDataDict[item])
+            if itemAdded:
+                print("Successfully added\t" + str(item) + "\tto\t" + str(shapeName))
+            else:
+                print("Could not find\t\t" + str(item) + "\tin\t" + str(shapeName))
     # Rince and repeate for each attribute
     # Need objects for attributs
     return newShape
@@ -49,7 +55,7 @@ def create_shape(shapeName, shapeDataDict, gData):
 # Constants
 FILE = "test.svg"
 PLOTTER_SIZE = (500, 500)
-ATTRIBUTE_LIST = ["path", "rect", "circle", "ellipse", "line", "polyline", "polygon"]
+SHAPE_LIST = ["path", "rect", "circle", "ellipse", "line", "polyline", "polygon"]
 FORMAT_SYSTAX = ["svg"]
 
 # Variables
@@ -71,7 +77,7 @@ for item in fileList:
 for item in fileListStrip:
     if item != "":
         objName = item.split()[0]
-        if objName in ATTRIBUTE_LIST:
+        if objName in SHAPE_LIST:
             # Create shape object
             print("Creating object: " + objName)
             objDict = get_obj_data(item)
