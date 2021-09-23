@@ -3,7 +3,9 @@ gCodeConverter - convert svg file to g-code
 
 """
 # Libraries
-from gCodeConverterObjects import *
+from gCodeConverterObjects import Shape
+import turtle
+import time
 
 # Functions
 def get_obj_data(objData):
@@ -36,19 +38,19 @@ def get_obj_data(objData):
 def create_shape(shapeName, shapeDataDict, gData):
     """Creates shape objects"""
     # Note: some objects may not exist
-    # Case for each object
-    if shapeName == "rect":
-        newShape = Rect()
-        for item in gData:
-            newShape.add(item, gData[item])
-        for item in shapeDataDict:
-            itemAdded = newShape.add(item, shapeDataDict[item])
-            if itemAdded:
-                print("Successfully added\t" + str(item) + "\tto\t" + str(shapeName))
-            else:
-                print("Could not find\t\t" + str(item) + "\tin\t" + str(shapeName))
-    # Rince and repeate for each attribute
-    # Need objects for attributs
+    newShape = Shape(shapeName)
+    for item in gData:
+        itemAdded = newShape.add(item, gData[item])
+        if itemAdded:
+            print("Successfully added\t" + str(item) + "\tto " + str(shapeName))
+        else:
+            print("Could not find\t\t" + str(item) + "\tin " + str(shapeName))
+    for item in shapeDataDict:
+        itemAdded = newShape.add(item, shapeDataDict[item])
+        if itemAdded:
+            print("Successfully added\t" + str(item) + "\tto " + str(shapeName))
+        else:
+            print("Could not find\t\t" + str(item) + "\tin " + str(shapeName))
     return newShape
 
 
@@ -101,3 +103,22 @@ for item in fileListStrip:
 # Print out instrutions
 for item in shapeObjList:
     print(item)
+
+# Turtle simulation
+t = turtle.Turtle()
+t.left(90)
+for item in shapeObjList:
+    if item.checkShape():
+        if item.shapeName == "rect":
+            t.penup()
+            t.setpos(item.x, item.y)
+            t.pendown()
+            t.setpos(item.x+item.width, item.y)
+            t.setpos(item.x+item.width, item.y+item.height)
+            t.setpos(item.x, item.y+item.height)
+            t.setpos(item.x, item.y)
+            t.penup()
+    else:
+        print("Object invald, not drawing object: " + str(item.shapeName))
+
+time.sleep(5)
