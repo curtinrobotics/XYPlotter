@@ -17,16 +17,30 @@ class Shape():
         # General
         # General Shape
         #   Rectangle (rect)
+        #   Circle (circle)
+        #   Ellipse (ellipse)
+        # Path (path)
 
         # Needed for General
-        self.x = None  #int# x position of shape
-        self.y = None  #int# y position of shape
 
         # Needed for General Shape
         # Needed for Rectangle
-        self.width = None  #int# Width of shape
-        self.height = None  #int# Height of shape
+        self.x = None  #float# x position of rectangle
+        self.y = None  #float# y position of rectangle
+        self.width = None  #float# Width of rectangle
+        self.height = None  #float# Height of rectangle
 
+        # Needed for Circle
+        self.cx = None  #float# x position of round shape
+        self.cy = None  #float# x position of round shape
+        self.r = None  #float# Radius of circle
+
+        # Needed for Ellipse
+        self.rx = None  #float# X radius of ellipse (also used in rectangle)
+        self.ry = None  #float# Y radius of ellipse (also used in rectangle)
+
+        # Needed for Path
+        self.d = None
 
         # Not needed to create object, has default value
         # For General
@@ -34,16 +48,13 @@ class Shape():
 
         # Stroke is properties of the line
         self.stroke = ""  #str# Color of line, no color, no line
-        self.stroke_width = 1  #int# Width of line
+        self.stroke_width = 1  #float# Width of line
         self.stroke_linecap = "butt"  #str# End style of line
         self.stroke_dasharray = ""  #str# Creates dashed lines
 
         # For General Shape
         self.fill = "black"  #str# Color of shape
 
-        # For Rectangle
-        self.rx = 0  #int# Curve indentation on x-axies of corners
-        self.ry = 0  #int# Curve indentation on y-axies of corners
 
 
     def add(self, attribute, value):
@@ -52,35 +63,67 @@ class Shape():
         foundAttribute = True
         if attribute == "x":
             try:
-                self.x = int(value)
+                self.x = float(value)
             except ValueError as err:
                 foundAttribute = False
                 print(err)
         elif attribute == "y":
             try:
-                self.y = int(value)
+                self.y = float(value)
             except ValueError as err:
                 foundAttribute = False
                 print(err)
         elif attribute == "width":
             try:
-                self.width = int(value)
+                self.width = float(value)
             except ValueError as err:
                 foundAttribute = False
                 print(err)
         elif attribute == "height":
             try:
-                self.height = int(value)
+                self.height = float(value)
             except ValueError as err:
                 foundAttribute = False
                 print(err)
+        elif attribute == "cx":
+            try:
+                self.cx = float(value)
+            except ValueError as err:
+                foundAttribute = False
+                print(err)
+        elif attribute == "cy":
+            try:
+                self.cy = float(value)
+            except ValueError as err:
+                foundAttribute = False
+                print(err)
+        elif attribute == "r":
+            try:
+                self.r = float(value)
+            except ValueError as err:
+                foundAttribute = False
+                print(err)
+        elif attribute == "rx":
+            try:
+                self.rx = float(value)
+            except ValueError as err:
+                foundAttribute = False
+                print(err)
+        elif attribute == "ry":
+            try:
+                self.ry = float(value)
+            except ValueError as err:
+                foundAttribute = False
+                print(err)
+        elif attribute == "d":
+            self.d = value
         elif attribute == "style": 
             self.style = value
         elif attribute == "stroke":
             self.stroke = value
         elif attribute == "stroke-width":
             try:
-                self.stroke_width = int(value)
+                self.stroke_width = float(value)
             except ValueError as err:
                 foundAttribute = False
                 print(err)
@@ -90,18 +133,6 @@ class Shape():
             self.stroke_dasharray = value
         elif attribute == "fill":
             self.fill = value
-        elif attribute == "rx":
-            try:
-                self.rx = int(value)
-            except ValueError as err:
-                foundAttribute = False
-                print(err)
-        elif attribute == "ry":
-            try:
-                self.ry = int(value)
-            except ValueError as err:
-                foundAttribute = False
-                print(err) 
         else:
             foundAttribute = False
         return foundAttribute
@@ -114,6 +145,21 @@ class Shape():
                 and self.width >= 0 \
                 and self.height >= 0:
                     validObject = True
+        if self.shapeName == "circle":
+            if self.cx >= 0 \
+                and self.cy >= 0 \
+                and self.r >= 0:
+                    validObject = True
+        if self.shapeName == "ellipse":
+            if self.cx >= 0 \
+                and self.cy >= 0 \
+                and self.rx >= 0 \
+                and self.ry >= 0:
+                    validObject = True
+        if self.shapeName == "path":
+            if self.d != "":
+                validObject = True
+        
     
 
         return validObject

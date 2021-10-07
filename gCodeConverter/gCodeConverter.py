@@ -5,6 +5,7 @@ gCodeConverter - convert svg file to g-code
 # Libraries
 from gCodeConverterObjects import Shape
 import turtle
+import math
 import time
 
 # Functions
@@ -53,11 +54,20 @@ def create_shape(shapeName, shapeDataDict, gData):
             print("Could not find\t\t" + str(item) + "\tin " + str(shapeName))
     return newShape
 
+def draw_arc(xPos, yPos, rx, ry, sDegree, degree, res):
+    """Draws arc with radius r, starting at sDegree"""
+    sRad = sDegree * math.pi/180  # Start pos
+    rad = degree * math.pi/180  # Move amount
+    for step in range(res+1):
+        x = xPos + rx * math.cos((rad/res)*step + sRad)
+        y = yPos + ry * math.sin((rad/res)*step + sRad)
+        t.setpos(x, y)
+    
 
 # Constants
-FILE = "test.svg"
+FILE = "pathTest.svg"
 PLOTTER_SIZE = (500, 500)
-SHAPE_LIST = ["path", "rect", "circle", "ellipse", "line", "polyline", "polygon"]
+SHAPE_LIST = ["path", "rect", "circle", "ellipse"] # not  implemented: , "line", "polyline", "polygon"]
 FORMAT_SYSTAX = ["svg"]
 
 # Variables
@@ -100,25 +110,55 @@ for item in fileListStrip:
         else:
             print("What dis: " + str(objName))
 
-# Print out instrutions
-for item in shapeObjList:
-    print(item)
-
 # Turtle simulation
 t = turtle.Turtle()
 t.left(90)
-for item in shapeObjList:
-    if item.checkShape():
-        if item.shapeName == "rect":
+for i in shapeObjList:
+    print(i)
+    if i.checkShape():
+        if i.shapeName == "rect":
+            if i.rx == None:
+                i.rx = 0
+            if i.ry == None:
+                i.ry = 0
+            if i.rx > i.width/2:
+                i.rx = i.width/2
+            if i.ry > i.height/2:
+                i.ry = i.height/2
             t.penup()
-            t.setpos(item.x, item.y)
+            t.setpos(i.x+i.rx, i.y)
             t.pendown()
-            t.setpos(item.x+item.width, item.y)
-            t.setpos(item.x+item.width, item.y+item.height)
-            t.setpos(item.x, item.y+item.height)
-            t.setpos(item.x, item.y)
+            if i.rx+i.ry != 0:
+                t.setpos(i.x+i.width-i.rx, i.y)
+                draw_arc(i.x+i.width-i.rx, i.y+i.ry, i.rx, i.ry, -90, 90, 25)
+                t.setpos(i.x+i.width, i.y+i.height-i.ry)
+                draw_arc(i.x+i.width-i.rx, i.y+i.height-i.ry, i.rx, i.ry, 0, 90, 25)
+                t.setpos(i.x+i.rx, i.y+i.height)
+                draw_arc(i.x+i.rx, i.y+i.height-i.ry, i.rx, i.ry, 90, 90, 25)
+                t.setpos(i.x, i.y+i.ry)
+                draw_arc(i.x+i.rx, i.y+i.ry, i.rx, i.ry, -180, 90, 25)
+            else:
+                t.setpos(i.x+i.width, i.y)
+                t.setpos(i.x+i.width, i.y+i.height)
+                t.setpos(i.x, i.y+i.height)
+                t.setpos(i.x, i.y)
             t.penup()
+        if i.shapeName == "circle" or i.shapeName == "ellipse":
+            if i.shapeName == "circle":
+                i.rx = i.r
+                i.ry = i.r
+            t.penup()
+            t.setpos(i.cx+i.rx, i.cy)
+            t.pendown()
+            draw_arc(i.cx, i.cy, i.rx, i.ry, 0, 360, 100)
+            t.penup()
+        if i.shapeName == "path":
+            for char in i.d:
+                # Add code to interprate each char in string
+                print(char, end="")
+
+
     else:
-        print("Object invald, not drawing object: " + str(item.shapeName))
+        print("Object invald, not drawing object: " + str(i.shapeName))
 
 time.sleep(5)

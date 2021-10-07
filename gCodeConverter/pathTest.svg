@@ -1,0 +1,5 @@
+<svg height="210" width="400">
+  <path d="M150 0L75 200 L225 200L250 100" stroke="blue" fill="none"/>
+  <path id="lineAB" d="M 100 350 L 150 -300" stroke="red"
+  stroke-width="3" fill="none" />
+</svg>
