@@ -65,9 +65,10 @@ def draw_arc(xPos, yPos, rx, ry, sDegree, degree, res):
     
 
 # Constants
-FILE = "pathTest.svg"
-PLOTTER_SIZE = (500, 500)
-SHAPE_LIST = ["path", "rect", "circle", "ellipse"] # not  implemented: , "line", "polyline", "polygon"]
+FILE = "freesample.svg"  # Source file for plotting
+PLOTTER_SIZE = (500, 500)  # Size of plot (Check fathethest point in svg file)
+CURVE_RES = 25  # Resolution of curves (lower res faster drawing but more segmented), Must be whole number
+SHAPE_LIST = ["path", "rect", "circle", "ellipse"]  # not  implemented: , "line", "polyline", "polygon"]
 FORMAT_SYSTAX = ["svg"]
 
 # Variables
@@ -130,13 +131,13 @@ for i in shapeObjList:
             t.pendown()
             if i.rx+i.ry != 0:
                 t.setpos(i.x+i.width-i.rx, i.y)
-                draw_arc(i.x+i.width-i.rx, i.y+i.ry, i.rx, i.ry, -90, 90, 25)
+                draw_arc(i.x+i.width-i.rx, i.y+i.ry, i.rx, i.ry, -90, 90, CURVE_RES)
                 t.setpos(i.x+i.width, i.y+i.height-i.ry)
-                draw_arc(i.x+i.width-i.rx, i.y+i.height-i.ry, i.rx, i.ry, 0, 90, 25)
+                draw_arc(i.x+i.width-i.rx, i.y+i.height-i.ry, i.rx, i.ry, 0, 90, CURVE_RES)
                 t.setpos(i.x+i.rx, i.y+i.height)
-                draw_arc(i.x+i.rx, i.y+i.height-i.ry, i.rx, i.ry, 90, 90, 25)
+                draw_arc(i.x+i.rx, i.y+i.height-i.ry, i.rx, i.ry, 90, 90, CURVE_RES)
                 t.setpos(i.x, i.y+i.ry)
-                draw_arc(i.x+i.rx, i.y+i.ry, i.rx, i.ry, -180, 90, 25)
+                draw_arc(i.x+i.rx, i.y+i.ry, i.rx, i.ry, -180, 90, CURVE_RES)
             else:
                 t.setpos(i.x+i.width, i.y)
                 t.setpos(i.x+i.width, i.y+i.height)
@@ -150,15 +151,92 @@ for i in shapeObjList:
             t.penup()
             t.setpos(i.cx+i.rx, i.cy)
             t.pendown()
-            draw_arc(i.cx, i.cy, i.rx, i.ry, 0, 360, 100)
+            draw_arc(i.cx, i.cy, i.rx, i.ry, 0, 360, CURVE_RES*4)
             t.penup()
         if i.shapeName == "path":
+            pathCommands = ["M", "L", "H", "V", "C", "S", "Q", "T", "A", "Z"]
+            pathCur = ""
+            pathShape = []
+
+            # Split path into commands
             for char in i.d:
-                # Add code to interprate each char in string
+                char = char.upper()
                 print(char, end="")
+                if char in pathCommands:
+                    pathCur = "".join(pathCur)
+                    pathShape.append(pathCur)
+                    pathCur = []
+                pathCur += char
+            pathShape = pathShape[1:]
+            print(pathShape)
+
+            # Split commands into points
+            prevPoint = [0, 0]
+            for command in pathShape:
+                commandType = command[0]
+                commandPoints = command[1:].split(",")
+                for index, point in enumerate(commandPoints):
+                    commandPoints[index] = float(point)
+                prevPoint = commandPoints[-1:]
+                print(commandPoints)
+                if commandType == "M":
+                    t.penup()
+                    t.setpos(commandPoints[0], commandPoints[1])
+                    t.pendown()
+                elif commandType == "L":
+                    print("Line to be added")
+                elif commandType == "H":
+                    print("Horizontal line to be added")
+                elif commandType == "V":
+                    print("Vertical line to be added")
+                elif commandType == "C":
+                    print("Curve to be added")
+                    for i in range(0, 100, 1):
+                        i /= 100
+                        xPoint = (((1-i)**3) * prevPoint[0]) + (3*i*((1-i)**2) * commandPoints[0]) + (3*(i**2) * (1-i) * commandPoints[2]) + (i**3 * commandPoints[4])
+                        yPoint = (((1-i)**3) * prevPoint[1]) + (3*i*((1-i)**2) * commandPoints[1]) + (3*(i**2) * (1-i) * commandPoints[3]) + (i**3 * commandPoints[5])
+                        t.setpos(xPoint, yPoint)
+                        print(str(xPoint) + ", " + str(yPoint))
+                elif commandType == "S":
+                    print("Smooth curve to be added")
+                elif commandType == "Q":
+                    print("Quaratic curve to be added")
+                elif commandType == "T":
+                    print("Smooth quadratic curve to be added")
+                elif commandType == "A":
+                    print("Arc to be added")
+                elif commandType == "Z":
+                    print("Close path to be added")
+
+
+
+
+            print()
+                
+                
 
 
     else:
         print("Object invald, not drawing object: " + str(i.shapeName))
+
+"""
+# Curve Test
+
+xVal = [0,0,200,200]
+yVal = [0,200,0,200]
+t.penup()
+t.setpos(0, 0)
+t.pendown()
+t.setpos(0,200)
+t.setpos(0,0)
+for i in range(0, 100, 1):
+    i /= 100
+    xPoint = (((1-i)**3) * xVal[0]) + (3*i*((1-i)**2) * xVal[1]) + (3*(i**2) * (1-i) * xVal[2]) + (i**3 * xVal[3])
+    yPoint = (((1-i)**3) * yVal[0]) + (3*i*((1-i)**2) * yVal[1]) + (3*(i**2) * (1-i) * yVal[2]) + (i**3 * yVal[3])
+    t.setpos(xPoint, yPoint)
+    print(str(xPoint) + ", " + str(yPoint))
+
+t.penup()
+"""
 
 time.sleep(5)
