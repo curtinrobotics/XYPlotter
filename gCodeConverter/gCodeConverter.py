@@ -65,7 +65,7 @@ def draw_arc(xPos, yPos, rx, ry, sDegree, degree, res):
     
 
 # Constants
-FILE = "freesample.svg"  # Source file for plotting
+FILE = "inkScapeTest.svg"  # Source file for plotting
 PLOTTER_SIZE = (500, 500)  # Size of plot (Check fathethest point in svg file)
 CURVE_RES = 25  # Resolution of curves (lower res faster drawing but more segmented), Must be whole number
 SHAPE_LIST = ["path", "rect", "circle", "ellipse"]  # not  implemented: , "line", "polyline", "polygon"]
@@ -160,53 +160,90 @@ for i in shapeObjList:
 
             # Split path into commands
             for char in i.d:
-                char = char.upper()
-                print(char, end="")
-                if char in pathCommands:
+                if char.upper() in pathCommands:
                     pathCur = "".join(pathCur)
                     pathShape.append(pathCur)
                     pathCur = []
                 pathCur += char
+            pathCur = "".join(pathCur)
+            pathShape.append(pathCur)
             pathShape = pathShape[1:]
             print(pathShape)
 
             # Split commands into points
+            startPoint = [0, 0]
             prevPoint = [0, 0]
             for command in pathShape:
+                command = command.strip()
                 commandType = command[0]
-                commandPoints = command[1:].split(",")
+                # Find point in string
+                commandPoints = [""]
+                commandPointsIndex = 0
+                for char in command[1:]:
+                    if char == "," or char == " " or char == "-":
+                        commandPointsIndex += 1
+                        if char == "-":
+                            commandPoints.append(char)
+                        else:
+                            commandPoints.append("")
+                    else:
+                        commandPoints[commandPointsIndex] += char
+                while "" in commandPoints:
+                    commandPoints.remove("")
                 for index, point in enumerate(commandPoints):
                     commandPoints[index] = float(point)
-                prevPoint = commandPoints[-1:]
-                print(commandPoints)
-                if commandType == "M":
+                # Plot points with respect to command
+                moveRelative = False
+                if commandType not in pathCommands:
+                    moveRelative = True
+                    print("relaive points")
+                if commandType.upper() == "M":
+                    print("Move")
                     t.penup()
-                    t.setpos(commandPoints[0], commandPoints[1])
+                    t.setpos(prevPoint[0]*moveRelative + commandPoints[0], prevPoint[1]*moveRelative + commandPoints[1])
                     t.pendown()
-                elif commandType == "L":
-                    print("Line to be added")
-                elif commandType == "H":
-                    print("Horizontal line to be added")
-                elif commandType == "V":
-                    print("Vertical line to be added")
-                elif commandType == "C":
-                    print("Curve to be added")
-                    for i in range(0, 100, 1):
-                        i /= 100
-                        xPoint = (((1-i)**3) * prevPoint[0]) + (3*i*((1-i)**2) * commandPoints[0]) + (3*(i**2) * (1-i) * commandPoints[2]) + (i**3 * commandPoints[4])
-                        yPoint = (((1-i)**3) * prevPoint[1]) + (3*i*((1-i)**2) * commandPoints[1]) + (3*(i**2) * (1-i) * commandPoints[3]) + (i**3 * commandPoints[5])
+                    startPoint = [prevPoint[0]*moveRelative + commandPoints[0], prevPoint[1]*moveRelative + commandPoints[1]]
+                    prevPoint = [prevPoint[0]*moveRelative + commandPoints[0], prevPoint[1]*moveRelative + commandPoints[1]]
+                elif commandType.upper() == "L":
+                    print("Line")
+                    t.setpos(prevPoint[0]*moveRelative + commandPoints[0], prevPoint[1]*moveRelative + commandPoints[1])
+                elif commandType.upper() == "H":
+                    print("Horizontal line")
+                    t.setpos(prevPoint[0]*moveRelative + commandPoints[0], prevPoint[1])
+                    prevPoint = [prevPoint[0]*moveRelative + commandPoints[0], prevPoint[1]]
+                elif commandType.upper() == "V":
+                    print("Vertical line rel")
+                    t.setpos(prevPoint[0], prevPoint[1]*moveRelative + commandPoints[0])
+                    prevPoint = [prevPoint[0], prevPoint[1]*moveRelative + commandPoints[0]]
+                elif commandType.upper() == "C":
+                    print("Curve")
+                    for i in range(0, CURVE_RES*4+1, 1):
+                        i /= CURVE_RES*4
+                        xPoint = (((1-i)**3) * prevPoint[0]) + (3*i*((1-i)**2) * (prevPoint[0]*moveRelative+commandPoints[0])) + (3*(i**2) * (1-i) * (prevPoint[0]*moveRelative+commandPoints[2])) + (i**3 * (prevPoint[0]*moveRelative+commandPoints[4]))
+                        yPoint = (((1-i)**3) * prevPoint[1]) + (3*i*((1-i)**2) * (prevPoint[1]*moveRelative+commandPoints[1])) + (3*(i**2) * (1-i) * (prevPoint[1]*moveRelative+commandPoints[3])) + (i**3 * (prevPoint[1]*moveRelative+commandPoints[5]))
                         t.setpos(xPoint, yPoint)
-                        print(str(xPoint) + ", " + str(yPoint))
-                elif commandType == "S":
-                    print("Smooth curve to be added")
-                elif commandType == "Q":
-                    print("Quaratic curve to be added")
-                elif commandType == "T":
-                    print("Smooth quadratic curve to be added")
-                elif commandType == "A":
-                    print("Arc to be added")
-                elif commandType == "Z":
-                    print("Close path to be added")
+                elif commandType.upper() == "S":
+                    print("Smooth curve to be added ###########################################")
+                elif commandType.upper() == "Q":
+                    print("Quaratic curve to be added #########################################")
+                elif commandType.upper() == "T":
+                    print("Smooth quadratic curve to be added #################################")
+                elif commandType.upper() == "A":
+                    print("Arc to be added ####################################################")
+                elif commandType.upper() == "Z":
+                    print("Close path")
+                    t.setpos(startPoint)
+                    prevPoint = startPoint
+
+
+                if len(commandPoints) >= 2:
+                    prevPoint = [prevPoint[0]*moveRelative + commandPoints[-2], prevPoint[1]*moveRelative + commandPoints[-1]]
+                
+
+                print(commandPoints)
+                print(prevPoint)
+                    
+                
 
 
 
@@ -238,5 +275,4 @@ for i in range(0, 100, 1):
 
 t.penup()
 """
-
-time.sleep(5)
+input()  # delay till enter
