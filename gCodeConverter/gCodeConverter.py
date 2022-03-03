@@ -61,19 +61,27 @@ def draw_arc(xPos, yPos, rx, ry, sDegree, degree, res):
     for step in range(res+1):
         x = xPos + rx * math.cos((rad/res)*step + sRad)
         y = yPos + ry * math.sin((rad/res)*step + sRad)
-        t.setpos(x, y)
-    
+        addPoint("point", x, y)
+
+def addPoint(sel, xPos=0, yPos=0):
+    if sel == "point":
+        pointsList.append(xPos)
+        pointsList.append(yPos)
+    elif sel == "up" or sel == "down":
+        pointsList.append(sel)
+    else:
+        print("addPoint error, \"" + str(sel) + "\" not valid selection")
+        raise TypeError("addPoint error, \"" + str(sel) + "\" not valid selection")
 
 # Constants
-FILE = "inkScapeTest.svg"  # Source file for plotting
-PLOTTER_SIZE = (500, 500)  # Size of plot (Check fathethest point in svg file)
-CURVE_RES = 25  # Resolution of curves (lower res faster drawing but more segmented), Must be whole number
+FILE = "pathTest.svg"  # Source file for plotting
 SHAPE_LIST = ["path", "rect", "circle", "ellipse"]  # not  implemented: , "line", "polyline", "polygon"]
 FORMAT_SYSTAX = ["svg"]
 
 # Variables
 shapeObjList = []
 gData = {}
+pointsList = []
 
 # Import svg file
 with open(FILE, "r") as fileObj:
@@ -111,9 +119,7 @@ for item in fileListStrip:
         else:
             print("What dis: " + str(objName))
 
-# Turtle simulation
-t = turtle.Turtle()
-t.left(90)
+# Point mapping
 for i in shapeObjList:
     print(i)
     if i.checkShape():
@@ -126,33 +132,33 @@ for i in shapeObjList:
                 i.rx = i.width/2
             if i.ry > i.height/2:
                 i.ry = i.height/2
-            t.penup()
-            t.setpos(i.x+i.rx, i.y)
-            t.pendown()
+            addPoint("up")
+            addPoint("point", i.x+i.rx, i.y)
+            addPoint("down")
             if i.rx+i.ry != 0:
-                t.setpos(i.x+i.width-i.rx, i.y)
-                draw_arc(i.x+i.width-i.rx, i.y+i.ry, i.rx, i.ry, -90, 90, CURVE_RES)
-                t.setpos(i.x+i.width, i.y+i.height-i.ry)
-                draw_arc(i.x+i.width-i.rx, i.y+i.height-i.ry, i.rx, i.ry, 0, 90, CURVE_RES)
-                t.setpos(i.x+i.rx, i.y+i.height)
-                draw_arc(i.x+i.rx, i.y+i.height-i.ry, i.rx, i.ry, 90, 90, CURVE_RES)
-                t.setpos(i.x, i.y+i.ry)
-                draw_arc(i.x+i.rx, i.y+i.ry, i.rx, i.ry, -180, 90, CURVE_RES)
+                addPoint("point", i.x+i.width-i.rx, i.y)
+                draw_arc(i.x+i.width-i.rx, i.y+i.ry, i.rx, i.ry, -90, 90, 25)
+                addPoint("point", i.x+i.width, i.y+i.height-i.ry)
+                draw_arc(i.x+i.width-i.rx, i.y+i.height-i.ry, i.rx, i.ry, 0, 90, 25)
+                addPoint("point", i.x+i.rx, i.y+i.height)
+                draw_arc(i.x+i.rx, i.y+i.height-i.ry, i.rx, i.ry, 90, 90, 25)
+                addPoint("point", i.x, i.y+i.ry)
+                draw_arc(i.x+i.rx, i.y+i.ry, i.rx, i.ry, -180, 90, 25)
             else:
-                t.setpos(i.x+i.width, i.y)
-                t.setpos(i.x+i.width, i.y+i.height)
-                t.setpos(i.x, i.y+i.height)
-                t.setpos(i.x, i.y)
-            t.penup()
+                addPoint("point", i.x+i.width, i.y)
+                addPoint("point", i.x+i.width, i.y+i.height)
+                addPoint("point", i.x, i.y+i.height)
+                addPoint("point", i.x, i.y)
+            addPoint("up")
         if i.shapeName == "circle" or i.shapeName == "ellipse":
             if i.shapeName == "circle":
                 i.rx = i.r
                 i.ry = i.r
-            t.penup()
-            t.setpos(i.cx+i.rx, i.cy)
-            t.pendown()
-            draw_arc(i.cx, i.cy, i.rx, i.ry, 0, 360, CURVE_RES*4)
-            t.penup()
+            addPoint("up")
+            addPoint("point", i.cx+i.rx, i.cy)
+            addPoint("down")
+            draw_arc(i.cx, i.cy, i.rx, i.ry, 0, 360, 100)
+            addPoint("up")
         if i.shapeName == "path":
             pathCommands = ["M", "L", "H", "V", "C", "S", "Q", "T", "A", "Z"]
             pathCur = ""
@@ -199,40 +205,52 @@ for i in shapeObjList:
                     print("relaive points")
                 if commandType.upper() == "M":
                     print("Move")
-                    t.penup()
-                    t.setpos(prevPoint[0]*moveRelative + commandPoints[0], prevPoint[1]*moveRelative + commandPoints[1])
-                    t.pendown()
+                    addPoint("up")
+                    addPoint("point", prevPoint[0]*moveRelative + commandPoints[0], prevPoint[1]*moveRelative + commandPoints[1])
+                    addPoint("down")
                     startPoint = [prevPoint[0]*moveRelative + commandPoints[0], prevPoint[1]*moveRelative + commandPoints[1]]
                     prevPoint = [prevPoint[0]*moveRelative + commandPoints[0], prevPoint[1]*moveRelative + commandPoints[1]]
                 elif commandType.upper() == "L":
                     print("Line")
-                    t.setpos(prevPoint[0]*moveRelative + commandPoints[0], prevPoint[1]*moveRelative + commandPoints[1])
+                    addPoint("point", prevPoint[0]*moveRelative + commandPoints[0], prevPoint[1]*moveRelative + commandPoints[1])
                 elif commandType.upper() == "H":
                     print("Horizontal line")
-                    t.setpos(prevPoint[0]*moveRelative + commandPoints[0], prevPoint[1])
+                    addPoint("point", prevPoint[0]*moveRelative + commandPoints[0], prevPoint[1])
                     prevPoint = [prevPoint[0]*moveRelative + commandPoints[0], prevPoint[1]]
                 elif commandType.upper() == "V":
                     print("Vertical line rel")
-                    t.setpos(prevPoint[0], prevPoint[1]*moveRelative + commandPoints[0])
+                    addPoint("point", prevPoint[0], prevPoint[1]*moveRelative + commandPoints[0])
                     prevPoint = [prevPoint[0], prevPoint[1]*moveRelative + commandPoints[0]]
                 elif commandType.upper() == "C":
                     print("Curve")
-                    for i in range(0, CURVE_RES*4+1, 1):
-                        i /= CURVE_RES*4
+                    for i in range(0, 101, 1):
+                        i /= 100
                         xPoint = (((1-i)**3) * prevPoint[0]) + (3*i*((1-i)**2) * (prevPoint[0]*moveRelative+commandPoints[0])) + (3*(i**2) * (1-i) * (prevPoint[0]*moveRelative+commandPoints[2])) + (i**3 * (prevPoint[0]*moveRelative+commandPoints[4]))
                         yPoint = (((1-i)**3) * prevPoint[1]) + (3*i*((1-i)**2) * (prevPoint[1]*moveRelative+commandPoints[1])) + (3*(i**2) * (1-i) * (prevPoint[1]*moveRelative+commandPoints[3])) + (i**3 * (prevPoint[1]*moveRelative+commandPoints[5]))
-                        t.setpos(xPoint, yPoint)
+                        addPoint("point", xPoint, yPoint)
                 elif commandType.upper() == "S":
-                    print("Smooth curve to be added ###########################################")
+                    print("Smooth curve in testing")
+                    for i in range(0, 101, 1):
+                        i /= 100
+                        xPoint = (((1-i)**3) * prevPoint[0]) + (3*i*((1-i)**2) * (2*prevPoint[0]*moveRelative+commandPoints[2]) - (prevPoint[0]*moveRelative+commandPoints[0])) + (3*(i**2) * (1-i) * (prevPoint[0]*moveRelative+commandPoints[0])) + (i**3 * (prevPoint[0]*moveRelative+commandPoints[2]))
+                        yPoint = (((1-i)**3) * prevPoint[1]) + (3*i*((1-i)**2) * (2*prevPoint[1]*moveRelative+commandPoints[3]) - (prevPoint[0]*moveRelative+commandPoints[1])) + (3*(i**2) * (1-i) * (prevPoint[1]*moveRelative+commandPoints[1])) + (i**3 * (prevPoint[1]*moveRelative+commandPoints[3]))
+                        addPoint("point", xPoint, yPoint)
+
                 elif commandType.upper() == "Q":
-                    print("Quaratic curve to be added #########################################")
+                    print("Quaratic curve")
+                    for i in range(0, 101, 1):
+                        i /= 100
+                        xPoint = (((1-i)**2) * prevPoint[0]) + (2*i*(1-i) * (prevPoint[0]*moveRelative+commandPoints[0])) + (i**2 * (prevPoint[0]*moveRelative+commandPoints[2]))
+                        yPoint = (((1-i)**2) * prevPoint[1]) + (2*i*(1-i) * (prevPoint[1]*moveRelative+commandPoints[1])) + (i**2 * (prevPoint[1]*moveRelative+commandPoints[3]))
+                        addPoint("point", xPoint, yPoint)
                 elif commandType.upper() == "T":
                     print("Smooth quadratic curve to be added #################################")
+                    
                 elif commandType.upper() == "A":
                     print("Arc to be added ####################################################")
                 elif commandType.upper() == "Z":
                     print("Close path")
-                    t.setpos(startPoint)
+                    addPoint("point", startPoint[0], startPoint[1]) 
                     prevPoint = startPoint
 
 
@@ -244,10 +262,6 @@ for i in shapeObjList:
                 print(prevPoint)
                     
                 
-
-
-
-
             print()
                 
                 
@@ -256,23 +270,75 @@ for i in shapeObjList:
     else:
         print("Object invald, not drawing object: " + str(i.shapeName))
 
+# Point reduction
+# First loop: rounding
+for index, item in enumerate(pointsList):
+    if item != "up" and item != "down":
+        pointsList[index] = round(item, 1)
+
+# Second loop: removing duplicate point; finding max X and Y points
+maxXPoint = 0
+maxYPoint = 0
+minXPoint = 0
+minYPoint = 0
+i = 0
+while i < len(pointsList) - 2:
+    if pointsList[i] != "up" and pointsList[i] != "down":
+        if pointsList[i] > maxXPoint:
+            maxXPoint = pointsList[i]
+        if pointsList[i+1] > maxYPoint:
+            maxYPoint = pointsList[i+1]
+        if pointsList[i] < minXPoint:
+            minXPoint = pointsList[i]
+        if pointsList[i+1] < minYPoint:
+            minYPoint = pointsList[i+1]
+
+        if pointsList[i] == pointsList[i+2] and pointsList[i+1] == pointsList[i+3]:
+            del pointsList[i:i+2]
+        else:
+            i += 2
+    else:
+        i += 1
+
+# Turtle simulation
+# Turtle settings for screen
+screen = turtle.Screen()
+screen.setworldcoordinates(minXPoint-10, -maxYPoint-10, maxXPoint+10, -minYPoint+10)
+turtle.tracer(5, 25)
+t = turtle.Turtle()
+t.hideturtle()
+t.left(90)
+
+# Drawing of points
+i = 0
+while i < len(pointsList):
+    if pointsList[i] == "up":
+        t.penup()
+    elif pointsList[i] == "down":
+        t.pendown()
+    else:
+        t.setpos(pointsList[i], -pointsList[i+1])
+        i += 1
+    i += 1
+
+
 """
 # Curve Test
 
 xVal = [0,0,200,200]
 yVal = [0,200,0,200]
-t.penup()
-t.setpos(0, 0)
-t.pendown()
-t.setpos(0,200)
-t.setpos(0,0)
+addPoint("up")
+addPoint("point", 0, 0)
+addPoint("down")
+addPoint("point", 0,200)
+addPoint("point", 0,0)
 for i in range(0, 100, 1):
     i /= 100
     xPoint = (((1-i)**3) * xVal[0]) + (3*i*((1-i)**2) * xVal[1]) + (3*(i**2) * (1-i) * xVal[2]) + (i**3 * xVal[3])
     yPoint = (((1-i)**3) * yVal[0]) + (3*i*((1-i)**2) * yVal[1]) + (3*(i**2) * (1-i) * yVal[2]) + (i**3 * yVal[3])
-    t.setpos(xPoint, yPoint)
+    addPoint("point", xPoint, yPoint)
     print(str(xPoint) + ", " + str(yPoint))
 
-t.penup()
+addPoint("up")
 """
 input()  # delay till enter

@@ -1,3 +1,12 @@
-<svg height="500" width="500">
-  <path d="M100, 100 C 0 100, 100, 0, 100 50 z c 0 100, 100, 0, 100 100 Z" stroke="blue" fill="none"/>
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html>
+<html>
+<body>
+
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 width="472px" height="392px" viewBox="0 0 472 392" enable-background="new 0 0 472 392" xml:space="preserve">
+  <path d="M 0 0 c 0 100 100 100 100 0" />
+  <path d="M 0 150 s 30 150 100 0" />
 </svg>
+</body>
+</html>
