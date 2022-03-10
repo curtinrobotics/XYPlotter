@@ -179,6 +179,8 @@ for i in shapeObjList:
             # Split commands into points
             startPoint = [0, 0]
             prevPoint = [0, 0]
+            prevCommandType = ""
+            prevSmoothPoint = [0, 0]
             for command in pathShape:
                 command = command.strip()
                 commandType = command[0]
@@ -203,13 +205,14 @@ for i in shapeObjList:
                 if commandType not in pathCommands:
                     moveRelative = True
                     print("relaive points")
+
                 if commandType.upper() == "M":
                     print("Move")
                     addPoint("up")
                     addPoint("point", prevPoint[0]*moveRelative + commandPoints[0], prevPoint[1]*moveRelative + commandPoints[1])
                     addPoint("down")
                     startPoint = [prevPoint[0]*moveRelative + commandPoints[0], prevPoint[1]*moveRelative + commandPoints[1]]
-                    prevPoint = [prevPoint[0]*moveRelative + commandPoints[0], prevPoint[1]*moveRelative + commandPoints[1]]
+                    prevPoint = startPoint
                 elif commandType.upper() == "L":
                     print("Line")
                     addPoint("point", prevPoint[0]*moveRelative + commandPoints[0], prevPoint[1]*moveRelative + commandPoints[1])
@@ -218,7 +221,7 @@ for i in shapeObjList:
                     addPoint("point", prevPoint[0]*moveRelative + commandPoints[0], prevPoint[1])
                     prevPoint = [prevPoint[0]*moveRelative + commandPoints[0], prevPoint[1]]
                 elif commandType.upper() == "V":
-                    print("Vertical line rel")
+                    print("Vertical line")
                     addPoint("point", prevPoint[0], prevPoint[1]*moveRelative + commandPoints[0])
                     prevPoint = [prevPoint[0], prevPoint[1]*moveRelative + commandPoints[0]]
                 elif commandType.upper() == "C":
@@ -228,14 +231,15 @@ for i in shapeObjList:
                         xPoint = (((1-i)**3) * prevPoint[0]) + (3*i*((1-i)**2) * (prevPoint[0]*moveRelative+commandPoints[0])) + (3*(i**2) * (1-i) * (prevPoint[0]*moveRelative+commandPoints[2])) + (i**3 * (prevPoint[0]*moveRelative+commandPoints[4]))
                         yPoint = (((1-i)**3) * prevPoint[1]) + (3*i*((1-i)**2) * (prevPoint[1]*moveRelative+commandPoints[1])) + (3*(i**2) * (1-i) * (prevPoint[1]*moveRelative+commandPoints[3])) + (i**3 * (prevPoint[1]*moveRelative+commandPoints[5]))
                         addPoint("point", xPoint, yPoint)
+                        prevSmoothPoint = [(prevPoint[0]*moveRelative+commandPoints[2]), (prevPoint[1]*moveRelative+commandPoints[3])]
                 elif commandType.upper() == "S":
                     print("Smooth curve in testing")
                     for i in range(0, 101, 1):
                         i /= 100
-                        xPoint = (((1-i)**3) * prevPoint[0]) + (3*i*((1-i)**2) * (2*prevPoint[0]*moveRelative+commandPoints[2]) - (prevPoint[0]*moveRelative+commandPoints[0])) + (3*(i**2) * (1-i) * (prevPoint[0]*moveRelative+commandPoints[0])) + (i**3 * (prevPoint[0]*moveRelative+commandPoints[2]))
-                        yPoint = (((1-i)**3) * prevPoint[1]) + (3*i*((1-i)**2) * (2*prevPoint[1]*moveRelative+commandPoints[3]) - (prevPoint[0]*moveRelative+commandPoints[1])) + (3*(i**2) * (1-i) * (prevPoint[1]*moveRelative+commandPoints[1])) + (i**3 * (prevPoint[1]*moveRelative+commandPoints[3]))
+                        xPoint = (((1-i)**3) * prevPoint[0]) + (3*i*((1-i)**2) * (mirrorPoint[0])) + (3*(i**2) * (1-i) * (prevPoint[0]*moveRelative+commandPoints[0])) + (i**3 * (prevPoint[0]*moveRelative+commandPoints[2]))
+                        yPoint = (((1-i)**3) * prevPoint[1]) + (3*i*((1-i)**2) * (mirrorPoint[1])) + (3*(i**2) * (1-i) * (prevPoint[1]*moveRelative+commandPoints[1])) + (i**3 * (prevPoint[1]*moveRelative+commandPoints[3]))
                         addPoint("point", xPoint, yPoint)
-
+                    prevSmoothPoint = [(prevPoint[0]*moveRelative+commandPoints[2]), (prevPoint[1]*moveRelative+commandPoints[3])]
                 elif commandType.upper() == "Q":
                     print("Quaratic curve")
                     for i in range(0, 101, 1):
@@ -256,10 +260,12 @@ for i in shapeObjList:
 
                 if len(commandPoints) >= 2:
                     prevPoint = [prevPoint[0]*moveRelative + commandPoints[-2], prevPoint[1]*moveRelative + commandPoints[-1]]
-                
+                prevCommandType = commandType
 
                 print(commandPoints)
                 print(prevPoint)
+                print(prevCommandType)
+                print(prevSmoothPoint)
                     
                 
             print()
@@ -302,9 +308,13 @@ while i < len(pointsList) - 2:
 
 # Turtle simulation
 # Turtle settings for screen
+IMAGE_SCALING = 3
 screen = turtle.Screen()
-screen.setworldcoordinates(minXPoint-10, -maxYPoint-10, maxXPoint+10, -minYPoint+10)
-turtle.tracer(5, 25)
+canvasWidth = (maxXPoint-minXPoint)*IMAGE_SCALING
+canvasHeight = (maxYPoint-minYPoint)*IMAGE_SCALING
+turtle.screensize(canvasWidth, canvasHeight)
+screen.setup(canvasWidth+50, canvasHeight+50)
+turtle.tracer(1, 0)
 t = turtle.Turtle()
 t.hideturtle()
 t.left(90)
@@ -317,7 +327,7 @@ while i < len(pointsList):
     elif pointsList[i] == "down":
         t.pendown()
     else:
-        t.setpos(pointsList[i], -pointsList[i+1])
+        t.setpos(pointsList[i]*IMAGE_SCALING-canvasWidth/2, -pointsList[i+1]*IMAGE_SCALING+canvasHeight/2)
         i += 1
     i += 1
 
