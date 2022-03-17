@@ -74,7 +74,7 @@ def addPoint(sel, xPos=0, yPos=0):
         raise TypeError("addPoint error, \"" + str(sel) + "\" not valid selection")
 
 # Constants
-FILE = "pathTest.svg"  # Source file for plotting
+FILE = "freeSample.svg"  # Source file for plotting
 SHAPE_LIST = ["path", "rect", "circle", "ellipse"]  # not  implemented: , "line", "polyline", "polygon"]
 FORMAT_SYSTAX = ["svg"]
 
@@ -160,13 +160,13 @@ for i in shapeObjList:
             draw_arc(i.cx, i.cy, i.rx, i.ry, 0, 360, 100)
             addPoint("up")
         if i.shapeName == "path":
-            pathCommands = ["M", "L", "H", "V", "C", "S", "Q", "T", "A", "Z"]
+            pathCommands = {"M": 2,"L": 2,"H": 1,"V": 1,"C": 6,"S": 4,"Q": 4,"T": 2,"A": 99,"Z": 0}
             pathCur = ""
             pathShape = []
 
             # Split path into commands
             for char in i.d:
-                if char.upper() in pathCommands:
+                if char.upper() in pathCommands.keys():
                     pathCur = "".join(pathCur)
                     pathShape.append(pathCur)
                     pathCur = []
@@ -181,10 +181,11 @@ for i in shapeObjList:
             prevPoint = [0, 0]
             prevCommandType = ""
             prevSmoothPoint = [0, 0]
+            commandPointsAdj = [0, 0, 0, 0]
             for command in pathShape:
                 command = command.strip()
                 commandType = command[0]
-                # Find point in string
+                # Find points in string
                 commandPoints = [""]
                 commandPointsIndex = 0
                 for char in command[1:]:
@@ -200,16 +201,52 @@ for i in shapeObjList:
                     commandPoints.remove("")
                 for index, point in enumerate(commandPoints):
                     commandPoints[index] = float(point)
-                # Plot points with respect to command
+                # Number of commands per commands
+                commandLength = pathCommands[commandType.upper()]
+                commandIterations = (int( len(commandPoints) / commandLength ))
+                # Relative vs absolute points
                 moveRelative = False
-                if commandType not in pathCommands:
+                if commandType not in pathCommands.keys():
                     moveRelative = True
-                    print("relaive points")
+                # Pre-calculation of points
+                commandPointsAdjList = []
+                print("test1")
+                for commandPointNum in range(len(commandPoints)):
+                    # Update previous command data if new iteration
+                    print("test2")
+                    if commandPointNum % commandLength == 0:
+                        print("new iteration")
+                        print(commandType.upper())
+                        if len(commandPoints) >= 2:
+                            prevPoint = [commandPointsAdj[-2], commandPointsAdj[-1]]
+                        elif commandType.upper() == "H":
+                            prevPoint = [commandPointsAdj[0], prevPoint[1]]
+                        elif commandType.upper() == "V":
+                            prevPoint = [prevPoint[0], commandPointsAdj[0]]
+                        elif commandType.upper() == "Z":
+                            prevPoint = startPoint
+                        if commandType.upper() == "M":
+                            startPoint = prevPoint
+                        if prevCommandType.upper() in ["C", "S", "Q", "T"]:
+                            prevSmoothPoint = [moveRelative+commandPointsAdj[-4], commandPointsAdj[-3]]
+                        prevCommandType = commandType
+                        commandPointsAdjList.append(commandPointsAdj)
+                        commandPointsAdj = []
 
+                    commandPointsAdj.append(prevPoint[commandPointNum%2]*moveRelative + commandPoints[commandPointNum])
+                
+                print(commandPointsAdjList)
+                print(commandPoints)
+
+
+                # Plot points from commands points
+                for iteration in range(commandIterations):
+                    pass
+                
                 if commandType.upper() == "M":
                     print("Move")
                     addPoint("up")
-                    addPoint("point", prevPoint[0]*moveRelative + commandPoints[0], prevPoint[1]*moveRelative + commandPoints[1])
+                    addPoint("point", prevPoint[0]*moveRelative + commandPoints[0+commandLength*iteration], prevPoint[1]*moveRelative + commandPoints[1])
                     addPoint("down")
                     startPoint = [prevPoint[0]*moveRelative + commandPoints[0], prevPoint[1]*moveRelative + commandPoints[1]]
                     prevPoint = startPoint
@@ -233,7 +270,14 @@ for i in shapeObjList:
                         addPoint("point", xPoint, yPoint)
                         prevSmoothPoint = [(prevPoint[0]*moveRelative+commandPoints[2]), (prevPoint[1]*moveRelative+commandPoints[3])]
                 elif commandType.upper() == "S":
-                    print("Smooth curve in testing")
+                    print("Smooth curve")
+                    mirrorPoint = [0, 0]
+                    if prevCommandType.upper() in ["C", "S"]:
+                        for i in range(2):
+                            mirrorPoint[i] = prevPoint[i] + (prevPoint[i] - prevSmoothPoint[i])
+                    else:
+                        for i in range(2):
+                            mirrorPoint[i] = prevPoint[i] + commandPoints[i]
                     for i in range(0, 101, 1):
                         i /= 100
                         xPoint = (((1-i)**3) * prevPoint[0]) + (3*i*((1-i)**2) * (mirrorPoint[0])) + (3*(i**2) * (1-i) * (prevPoint[0]*moveRelative+commandPoints[0])) + (i**3 * (prevPoint[0]*moveRelative+commandPoints[2]))
@@ -256,16 +300,15 @@ for i in shapeObjList:
                     print("Close path")
                     addPoint("point", startPoint[0], startPoint[1]) 
                     prevPoint = startPoint
-
-
+                
                 if len(commandPoints) >= 2:
                     prevPoint = [prevPoint[0]*moveRelative + commandPoints[-2], prevPoint[1]*moveRelative + commandPoints[-1]]
                 prevCommandType = commandType
 
-                print(commandPoints)
-                print(prevPoint)
-                print(prevCommandType)
-                print(prevSmoothPoint)
+                #print(commandPoints)
+                #print(prevPoint)
+                #print(prevCommandType)
+                #print(prevSmoothPoint)
                     
                 
             print()
@@ -308,7 +351,7 @@ while i < len(pointsList) - 2:
 
 # Turtle simulation
 # Turtle settings for screen
-IMAGE_SCALING = 3
+IMAGE_SCALING = 2
 screen = turtle.Screen()
 canvasWidth = (maxXPoint-minXPoint)*IMAGE_SCALING
 canvasHeight = (maxYPoint-minYPoint)*IMAGE_SCALING
