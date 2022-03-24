@@ -74,7 +74,7 @@ def addPoint(sel, xPos=0, yPos=0):
         raise TypeError("addPoint error, \"" + str(sel) + "\" not valid selection")
 
 # Constants
-FILE = "freeSample.svg"  # Source file for plotting
+FILE = "pathTest.svg"  # Source file for plotting
 SHAPE_LIST = ["path", "rect", "circle", "ellipse"]  # not  implemented: , "line", "polyline", "polygon"]
 FORMAT_SYSTAX = ["svg"]
 
@@ -179,6 +179,7 @@ for i in shapeObjList:
             # Split commands into points
             startPoint = [0, 0]
             prevPoint = [0, 0]
+            prevCommandPoints= [0, 0]
             prevCommandType = ""
             prevSmoothPoint = [0, 0]
             commandPointsAdj = [0, 0, 0, 0]
@@ -203,107 +204,121 @@ for i in shapeObjList:
                     commandPoints[index] = float(point)
                 # Number of commands per commands
                 commandLength = pathCommands[commandType.upper()]
-                commandIterations = (int( len(commandPoints) / commandLength ))
-                # Relative vs absolute points
-                moveRelative = False
-                if commandType not in pathCommands.keys():
-                    moveRelative = True
-                # Pre-calculation of points
-                commandPointsAdjList = []
-                print("test1")
-                for commandPointNum in range(len(commandPoints)):
-                    # Update previous command data if new iteration
-                    print("test2")
-                    if commandPointNum % commandLength == 0:
-                        print("new iteration")
-                        print(commandType.upper())
-                        if len(commandPoints) >= 2:
-                            prevPoint = [commandPointsAdj[-2], commandPointsAdj[-1]]
-                        elif commandType.upper() == "H":
-                            prevPoint = [commandPointsAdj[0], prevPoint[1]]
-                        elif commandType.upper() == "V":
-                            prevPoint = [prevPoint[0], commandPointsAdj[0]]
-                        elif commandType.upper() == "Z":
-                            prevPoint = startPoint
-                        if commandType.upper() == "M":
-                            startPoint = prevPoint
-                        if prevCommandType.upper() in ["C", "S", "Q", "T"]:
-                            prevSmoothPoint = [moveRelative+commandPointsAdj[-4], commandPointsAdj[-3]]
-                        prevCommandType = commandType
-                        commandPointsAdjList.append(commandPointsAdj)
-                        commandPointsAdj = []
+                if commandLength != 0:
+                    commandIterations = (int( len(commandPoints) / commandLength ))
+                    # Relative vs absolute points
+                    moveRelative = False
+                    if commandType not in pathCommands.keys():
+                        moveRelative = True
+                    # Pre-calculation of points
+                    commandPointsAdjList = []
+                    print("New command")
+                    print(commandType)
 
-                    commandPointsAdj.append(prevPoint[commandPointNum%2]*moveRelative + commandPoints[commandPointNum])
-                
-                print(commandPointsAdjList)
-                print(commandPoints)
+                    for commandPointNum in range(len(commandPoints)):
+                        # Update previous command data if new iteration
+                        if commandPointNum % commandLength == 0:
+                            # Previous point "clean up"
+                            if len(commandPointsAdj) >= 2:
+                                prevPoint = [commandPointsAdj[-2], commandPointsAdj[-1]]
+                            elif prevCommandType.upper() == "H":
+                                prevPoint = [commandPointsAdj[0], prevPoint[1]]
+                            elif prevCommandType.upper() == "V":
+                                prevPoint = [prevPoint[0], commandPointsAdj[0]]
+                            elif prevCommandType.upper() == "Z":
+                                prevPoint = startPoint
+                            else:
+                                print("prevPoint ERROR")
+                            if commandType.upper() == "M":
+                                startPoint = prevPoint
+                            if prevCommandType.upper() in ["C", "S", "Q", "T"]:
+                                prevSmoothPoint = [moveRelative+commandPointsAdj[-4], commandPointsAdj[-3]]
+                            prevCommandType = commandType
+                            if commandPointNum/commandLength != 0:
+                                commandPointsAdjList.append(commandPointsAdj)
+                            commandPointsAdj = []
+
+                            # Current point extra additions
+                            if commandType == "H":
+                                pass
+                            elif commandType.upper() == "V":
+                                commandPointsAdj.append(prevCommandPoints[-2])
+                            elif commandType.upper() == "C":
+                                for i in range(-2, 0, -1):
+                                    commandPointsAdj.append(prevCommandPoints[i])
+                            else commandType.upper() == "S":
+                                for i in range(-2, 0, -1):
+                                    commandPointsAdj.append(prevCommandPoints[i])
+                                for i in range(-2, 0, -1):
+                                    commandPointsAdj.append(prevCommandPoints[i] + (prevCommandPoints[i] - prevCommandPoints[i-2]))
+
+                        commandPointsAdj.append(prevPoint[commandPointNum%2]*moveRelative + commandPoints[commandPointNum])
+                    
+
+                    commandPointsAdjList.append(commandPointsAdj)
+                    prevCommandPoints = commandPointsAdj
+                    print(commandPointsAdjList)
+                    print(commandPoints)
 
 
                 # Plot points from commands points
-                for iteration in range(commandIterations):
-                    pass
+                for iterCommandPoints in commandPointsAdjList:
+                    print(iterCommandPoints)
                 
-                if commandType.upper() == "M":
-                    print("Move")
-                    addPoint("up")
-                    addPoint("point", prevPoint[0]*moveRelative + commandPoints[0+commandLength*iteration], prevPoint[1]*moveRelative + commandPoints[1])
-                    addPoint("down")
-                    startPoint = [prevPoint[0]*moveRelative + commandPoints[0], prevPoint[1]*moveRelative + commandPoints[1]]
-                    prevPoint = startPoint
-                elif commandType.upper() == "L":
-                    print("Line")
-                    addPoint("point", prevPoint[0]*moveRelative + commandPoints[0], prevPoint[1]*moveRelative + commandPoints[1])
-                elif commandType.upper() == "H":
-                    print("Horizontal line")
-                    addPoint("point", prevPoint[0]*moveRelative + commandPoints[0], prevPoint[1])
-                    prevPoint = [prevPoint[0]*moveRelative + commandPoints[0], prevPoint[1]]
-                elif commandType.upper() == "V":
-                    print("Vertical line")
-                    addPoint("point", prevPoint[0], prevPoint[1]*moveRelative + commandPoints[0])
-                    prevPoint = [prevPoint[0], prevPoint[1]*moveRelative + commandPoints[0]]
-                elif commandType.upper() == "C":
-                    print("Curve")
-                    for i in range(0, 101, 1):
-                        i /= 100
-                        xPoint = (((1-i)**3) * prevPoint[0]) + (3*i*((1-i)**2) * (prevPoint[0]*moveRelative+commandPoints[0])) + (3*(i**2) * (1-i) * (prevPoint[0]*moveRelative+commandPoints[2])) + (i**3 * (prevPoint[0]*moveRelative+commandPoints[4]))
-                        yPoint = (((1-i)**3) * prevPoint[1]) + (3*i*((1-i)**2) * (prevPoint[1]*moveRelative+commandPoints[1])) + (3*(i**2) * (1-i) * (prevPoint[1]*moveRelative+commandPoints[3])) + (i**3 * (prevPoint[1]*moveRelative+commandPoints[5]))
-                        addPoint("point", xPoint, yPoint)
-                        prevSmoothPoint = [(prevPoint[0]*moveRelative+commandPoints[2]), (prevPoint[1]*moveRelative+commandPoints[3])]
-                elif commandType.upper() == "S":
-                    print("Smooth curve")
-                    mirrorPoint = [0, 0]
-                    if prevCommandType.upper() in ["C", "S"]:
+                    if commandType.upper() == "M":
+                        print("Move")
+                        addPoint("up")
+                        addPoint("point", iterCommandPoints[0], iterCommandPoints[1])
+                        addPoint("down")
+                    elif commandType.upper() == "L":
+                        print("Line")
+                        addPoint("point", iterCommandPoints[0], iterCommandPoints[1])
+                    elif commandType.upper() == "H":
+                        print("Horizontal line")
+                        addPoint("point", iterCommandPoints[0], prevPoint[1])
+                    elif commandType.upper() == "V":
+                        print("Vertical line")
+                        addPoint("point", prevPoint[0], iterCommandPoints[0])
+                    elif commandType.upper() == "C":
+                        print("Curve")
+                        for i in range(0, 101, 1):
+                            i /= 100
+                            xPoint = (((1-i)**3) * prevPoint[0]) + (3*i*((1-i)**2) * (iterCommandPoints[0])) + (3*(i**2) * (1-i) * (iterCommandPoints[2])) + (i**3 * (iterCommandPoints[4]))
+                            yPoint = (((1-i)**3) * prevPoint[1]) + (3*i*((1-i)**2) * (iterCommandPoints[1])) + (3*(i**2) * (1-i) * (iterCommandPoints[3])) + (i**3 * (iterCommandPoints[5]))
+                            addPoint("point", xPoint, yPoint)
+                    elif commandType.upper() == "S":
+                        print("Smooth curve")
+                        mirrorPoint = [0, 0]
+                        #if prevCommandType.upper() in ["C", "S"]:
                         for i in range(2):
                             mirrorPoint[i] = prevPoint[i] + (prevPoint[i] - prevSmoothPoint[i])
-                    else:
-                        for i in range(2):
-                            mirrorPoint[i] = prevPoint[i] + commandPoints[i]
-                    for i in range(0, 101, 1):
-                        i /= 100
-                        xPoint = (((1-i)**3) * prevPoint[0]) + (3*i*((1-i)**2) * (mirrorPoint[0])) + (3*(i**2) * (1-i) * (prevPoint[0]*moveRelative+commandPoints[0])) + (i**3 * (prevPoint[0]*moveRelative+commandPoints[2]))
-                        yPoint = (((1-i)**3) * prevPoint[1]) + (3*i*((1-i)**2) * (mirrorPoint[1])) + (3*(i**2) * (1-i) * (prevPoint[1]*moveRelative+commandPoints[1])) + (i**3 * (prevPoint[1]*moveRelative+commandPoints[3]))
-                        addPoint("point", xPoint, yPoint)
-                    prevSmoothPoint = [(prevPoint[0]*moveRelative+commandPoints[2]), (prevPoint[1]*moveRelative+commandPoints[3])]
-                elif commandType.upper() == "Q":
-                    print("Quaratic curve")
-                    for i in range(0, 101, 1):
-                        i /= 100
-                        xPoint = (((1-i)**2) * prevPoint[0]) + (2*i*(1-i) * (prevPoint[0]*moveRelative+commandPoints[0])) + (i**2 * (prevPoint[0]*moveRelative+commandPoints[2]))
-                        yPoint = (((1-i)**2) * prevPoint[1]) + (2*i*(1-i) * (prevPoint[1]*moveRelative+commandPoints[1])) + (i**2 * (prevPoint[1]*moveRelative+commandPoints[3]))
-                        addPoint("point", xPoint, yPoint)
-                elif commandType.upper() == "T":
-                    print("Smooth quadratic curve to be added #################################")
-                    
-                elif commandType.upper() == "A":
-                    print("Arc to be added ####################################################")
-                elif commandType.upper() == "Z":
-                    print("Close path")
-                    addPoint("point", startPoint[0], startPoint[1]) 
-                    prevPoint = startPoint
+                        #else:
+                        #    for i in range(2):
+                        #        mirrorPoint[i] = prevPoint[i] + iterCommandPoints[i]
+                        for i in range(0, 101, 1):
+                            i /= 100
+                            xPoint = (((1-i)**3) * prevPoint[0]) + (3*i*((1-i)**2) * (mirrorPoint[0])) + (3*(i**2) * (1-i) * (iterCommandPoints[0])) + (i**3 * (iterCommandPoints[2]))
+                            yPoint = (((1-i)**3) * prevPoint[1]) + (3*i*((1-i)**2) * (mirrorPoint[1])) + (3*(i**2) * (1-i) * (iterCommandPoints[1])) + (i**3 * (iterCommandPoints[3]))
+                            addPoint("point", xPoint, yPoint)
+                    elif commandType.upper() == "Q":
+                        print("Quaratic curve")
+                        for i in range(0, 101, 1):
+                            i /= 100
+                            xPoint = (((1-i)**2) * prevPoint[0]) + (2*i*(1-i) * (iterCommandPoints[0])) + (i**2 * (iterCommandPoints[2]))
+                            yPoint = (((1-i)**2) * prevPoint[1]) + (2*i*(1-i) * (iterCommandPoints[1])) + (i**2 * (iterCommandPoints[3]))
+                            addPoint("point", xPoint, yPoint)
+                    elif commandType.upper() == "T":
+                        print("Smooth quadratic curve to be added #################################")
+                        
+                    elif commandType.upper() == "A":
+                        print("Arc to be added ####################################################")
+                    elif commandType.upper() == "Z":
+                        print("Close path")
+                        addPoint("point", startPoint[0], startPoint[1]) 
                 
-                if len(commandPoints) >= 2:
-                    prevPoint = [prevPoint[0]*moveRelative + commandPoints[-2], prevPoint[1]*moveRelative + commandPoints[-1]]
-                prevCommandType = commandType
+                #if len(commandPoints) >= 2:
+                #    prevPoint = [prevPoint[0]*moveRelative + commandPoints[-2], prevPoint[1]*moveRelative + commandPoints[-1]]
+                #prevCommandType = commandType
 
                 #print(commandPoints)
                 #print(prevPoint)
