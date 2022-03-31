@@ -161,6 +161,7 @@ for i in shapeObjList:
             addPoint("up")
         if i.shapeName == "path":
             pathCommands = {"M": 2,"L": 2,"H": 1,"V": 1,"C": 6,"S": 4,"Q": 4,"T": 2,"A": 99,"Z": 0}
+            fullPathCommands = {"M": 2,"L": 2,"H": 2,"V": 2,"C": 8,"S": 8,"Q": 6,"T": 6,"A": 99,"Z": 0}
             pathCur = ""
             pathShape = []
 
@@ -212,6 +213,9 @@ for i in shapeObjList:
                         moveRelative = True
                     # Pre-calculation of points
                     commandPointsAdjList = []
+                    commandPointsAdj = [None]*fullPathCommands[commandType.upper()]
+                    commandNumOff = 0
+                    additionalPoints = False
                     print("New command")
                     print(commandType)
 
@@ -219,6 +223,7 @@ for i in shapeObjList:
                         # Update previous command data if new iteration
                         if commandPointNum % commandLength == 0:
                             # Previous point "clean up"
+                            '''
                             if len(commandPointsAdj) >= 2:
                                 prevPoint = [commandPointsAdj[-2], commandPointsAdj[-1]]
                             elif prevCommandType.upper() == "H":
@@ -234,29 +239,51 @@ for i in shapeObjList:
                             if prevCommandType.upper() in ["C", "S", "Q", "T"]:
                                 prevSmoothPoint = [moveRelative+commandPointsAdj[-4], commandPointsAdj[-3]]
                             prevCommandType = commandType
-                            if commandPointNum/commandLength != 0:
+                            '''
+
+                            if commandPointNum != 0:
+                                if additionalPoints:
+                                    commandPointsAdj[2] = commandPointsAdj[4]
+                                    commandPointsAdj[3] = commandPointsAdj[5]
+                                prevCommandPoints = commandPointsAdj
+                                prevCommandType = commandType
                                 commandPointsAdjList.append(commandPointsAdj)
-                            commandPointsAdj = []
+                                commandPointsAdj = [None]*fullPathCommands[commandType.upper()]
+                                commandNumOff = int(-pathCommands[commandType.upper()] * commandPointNum/commandLength)
 
                             # Current point extra additions
-                            if commandType == "H":
-                                pass
+                            if commandType.upper() == "M":
+                                startPoint = prevCommandPoints[-2:-1]
+                            elif commandType.upper() == "H":
+                                commandPointsAdj[1] = prevCommandPoints[-1]
                             elif commandType.upper() == "V":
-                                commandPointsAdj.append(prevCommandPoints[-2])
+                                commandPointsAdj[0] = prevCommandPoints[-2]
+                                commandNumOff += 1
                             elif commandType.upper() == "C":
-                                for i in range(-2, 0, -1):
-                                    commandPointsAdj.append(prevCommandPoints[i])
-                            else commandType.upper() == "S":
-                                for i in range(-2, 0, -1):
-                                    commandPointsAdj.append(prevCommandPoints[i])
-                                for i in range(-2, 0, -1):
-                                    commandPointsAdj.append(prevCommandPoints[i] + (prevCommandPoints[i] - prevCommandPoints[i-2]))
+                                commandPointsAdj[0] = prevCommandPoints[-2]
+                                commandPointsAdj[1] = prevCommandPoints[-1]
+                                commandNumOff += 2
+                            elif commandType.upper() == "S":
+                                commandPointsAdj[0] = prevCommandPoints[-2]
+                                commandPointsAdj[1] = prevCommandPoints[-1]
+                                if( prevCommandType.upper() in ["C", "S"] ):
+                                    commandPointsAdj[2] = prevCommandPoints[-2] + (prevCommandPoints[-2] - prevCommandPoints[-4])
+                                    commandPointsAdj[3] = prevCommandPoints[-1] + (prevCommandPoints[-1] - prevCommandPoints[-3])
+                                else:
+                                    additionalPoints = True
+                                commandNumOff += 4
+                            ## Working here, close path "Z" needs fixing
 
-                        commandPointsAdj.append(prevPoint[commandPointNum%2]*moveRelative + commandPoints[commandPointNum])
+                        commandPointsAdj[commandPointNum+commandNumOff] = prevCommandPoints[(commandPointNum%2)-2]*moveRelative + commandPoints[commandPointNum]
+                        if commandType == "v":
+                            commandPointsAdj[commandPointNum+commandNumOff] = prevCommandPoints[(1)-2]*moveRelative + commandPoints[commandPointNum]
                     
-
+                    if additionalPoints:
+                        commandPointsAdj[2] = commandPointsAdj[4]
+                        commandPointsAdj[3] = commandPointsAdj[5]
                     commandPointsAdjList.append(commandPointsAdj)
                     prevCommandPoints = commandPointsAdj
+                    prevCommandType = commandType
                     print(commandPointsAdjList)
                     print(commandPoints)
 
@@ -275,30 +302,16 @@ for i in shapeObjList:
                         addPoint("point", iterCommandPoints[0], iterCommandPoints[1])
                     elif commandType.upper() == "H":
                         print("Horizontal line")
-                        addPoint("point", iterCommandPoints[0], prevPoint[1])
+                        addPoint("point", iterCommandPoints[0], iterCommandPoints[1])
                     elif commandType.upper() == "V":
                         print("Vertical line")
-                        addPoint("point", prevPoint[0], iterCommandPoints[0])
-                    elif commandType.upper() == "C":
-                        print("Curve")
+                        addPoint("point", iterCommandPoints[0], iterCommandPoints[1])
+                    elif commandType.upper() in ["C", "S"]:
+                        print("Curve/Smooth Curve")
                         for i in range(0, 101, 1):
                             i /= 100
-                            xPoint = (((1-i)**3) * prevPoint[0]) + (3*i*((1-i)**2) * (iterCommandPoints[0])) + (3*(i**2) * (1-i) * (iterCommandPoints[2])) + (i**3 * (iterCommandPoints[4]))
-                            yPoint = (((1-i)**3) * prevPoint[1]) + (3*i*((1-i)**2) * (iterCommandPoints[1])) + (3*(i**2) * (1-i) * (iterCommandPoints[3])) + (i**3 * (iterCommandPoints[5]))
-                            addPoint("point", xPoint, yPoint)
-                    elif commandType.upper() == "S":
-                        print("Smooth curve")
-                        mirrorPoint = [0, 0]
-                        #if prevCommandType.upper() in ["C", "S"]:
-                        for i in range(2):
-                            mirrorPoint[i] = prevPoint[i] + (prevPoint[i] - prevSmoothPoint[i])
-                        #else:
-                        #    for i in range(2):
-                        #        mirrorPoint[i] = prevPoint[i] + iterCommandPoints[i]
-                        for i in range(0, 101, 1):
-                            i /= 100
-                            xPoint = (((1-i)**3) * prevPoint[0]) + (3*i*((1-i)**2) * (mirrorPoint[0])) + (3*(i**2) * (1-i) * (iterCommandPoints[0])) + (i**3 * (iterCommandPoints[2]))
-                            yPoint = (((1-i)**3) * prevPoint[1]) + (3*i*((1-i)**2) * (mirrorPoint[1])) + (3*(i**2) * (1-i) * (iterCommandPoints[1])) + (i**3 * (iterCommandPoints[3]))
+                            xPoint = (((1-i)**3) * iterCommandPoints[0]) + (3*i*((1-i)**2) * (iterCommandPoints[2])) + (3*(i**2) * (1-i) * (iterCommandPoints[4])) + (i**3 * (iterCommandPoints[6]))
+                            yPoint = (((1-i)**3) * iterCommandPoints[1]) + (3*i*((1-i)**2) * (iterCommandPoints[3])) + (3*(i**2) * (1-i) * (iterCommandPoints[5])) + (i**3 * (iterCommandPoints[7]))
                             addPoint("point", xPoint, yPoint)
                     elif commandType.upper() == "Q":
                         print("Quaratic curve")
@@ -366,7 +379,7 @@ while i < len(pointsList) - 2:
 
 # Turtle simulation
 # Turtle settings for screen
-IMAGE_SCALING = 2
+IMAGE_SCALING = 1
 screen = turtle.Screen()
 canvasWidth = (maxXPoint-minXPoint)*IMAGE_SCALING
 canvasHeight = (maxYPoint-minYPoint)*IMAGE_SCALING
