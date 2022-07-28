@@ -38,7 +38,7 @@ def get_obj_data(objData):
 
 def create_shape(shapeName, shapeDataDict, gData):
     """Creates shape objects"""
-    # Note: some objects may not exist
+    # Note: some objects may not exist J:Excuse me?
     newShape = Shape(shapeName)
     for item in gData:
         itemAdded = newShape.add(item, gData[item])
@@ -324,7 +324,7 @@ for i in shapeObjList:
                         print("Smooth quadratic curve to be added #################################")
                         
                     elif commandType.upper() == "A":
-                        print("Arc to be added ####################################################")
+                        print("Arc to be added Reeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee")
                     elif commandType.upper() == "Z":
                         print("Close path")
                         addPoint("point", startPoint[0], startPoint[1]) 
