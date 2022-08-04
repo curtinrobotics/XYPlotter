@@ -5,6 +5,7 @@ NOTE: Due to python not accepting hyphens "-" as valid variables,
         all attribute with hyphens have been replaced with underscores "_"
 
 """
+# Libraries
 from typing import Tuple
 
 """Shapes with attrubutes from svg files """
@@ -176,6 +177,7 @@ class pointsListObj():
             self.pointsList.append(xPos)
             self.pointsList.append(yPos)
         elif sel == "up" or sel == "down":
+            self.pointsList.append(sel)
             self.pointsList.append(sel)
         else:
             print("addPoint error, \"" + str(sel) + "\" not valid selection")

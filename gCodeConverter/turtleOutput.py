@@ -55,15 +55,12 @@ def drawPointsTurtle(pointsList, maxPoints):
     t = turtle.Turtle()
     t.hideturtle()
     t.left(90)
-
+    
     # Drawing of points
-    i = 0
-    while i < len(pointsList):
-        if pointsList[i] == "up":
+    for i in range(int(len(pointsList)/2)):
+        if pointsList[i*2] == "up":
             t.penup()
-        elif pointsList[i] == "down":
+        elif pointsList[i*2] == "down":
             t.pendown()
         else:
-            t.setpos(pointsList[i]*IMAGE_SCALING-canvasWidth/2, -pointsList[i+1]*IMAGE_SCALING+canvasHeight/2)
-            i += 1
-        i += 1
+            t.setpos(pointsList[i*2]*IMAGE_SCALING-canvasWidth/2, -pointsList[i*2+1]*IMAGE_SCALING+canvasHeight/2)
