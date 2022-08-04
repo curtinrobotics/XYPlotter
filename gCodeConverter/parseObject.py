@@ -211,10 +211,10 @@ def parseObjects(shapeObjList):
                                 yPoint = (((1-i)**2) * prevPoint[1]) + (2*i*(1-i) * (iterCommandPoints[1])) + (i**2 * (iterCommandPoints[3]))
                                 plo.addPoint("point", xPoint, yPoint)
                         elif commandType.upper() == "T":
-                            print("Smooth quadratic curve to be added #################################")
+                            print("Smooth quadratic curve to be added Reeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee")
                             
                         elif commandType.upper() == "A":
-                            print("Arc to be added ####################################################")
+                            print("Arc to be added Reeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee")
                         elif commandType.upper() == "Z":
                             print("Close path")
                             plo.addPoint("point", iterCommandPoints[0], iterCommandPoints[1]) 
