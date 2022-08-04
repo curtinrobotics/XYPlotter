@@ -35,7 +35,6 @@ def makeRect(plo, i):
         plo.addPoint("point", i.x, i.y)
     plo.addPoint("up")
 
-
 """Create Ellipse and Circles"""
 def makeEllipse(plo, i):
     if i.shapeName == "circle":
@@ -258,4 +257,5 @@ def parseObjects(shapeObjList):
         else:
             print("Object invald, not drawing object: " + str(i.shapeName))
     
+
     return plo.pointsList
