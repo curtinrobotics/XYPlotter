@@ -6,7 +6,7 @@ NOTE: Due to python not accepting hyphens "-" as valid variables,
 
 """
 # Libraries
-from typing import Tuple
+import math
 
 """Shapes with attrubutes from svg files """
 class Shape():
@@ -157,6 +157,11 @@ class Shape():
                 and self.rx >= 0 \
                 and self.ry >= 0:
                     validObject = True
+        if self.shapeName == "line":
+            pass
+            #Add min requirement here
+            #e.g. needs at least start and end points
+        #Add other shapes here ####################################################################
         if self.shapeName == "path":
             if self.d != "":
                 validObject = True

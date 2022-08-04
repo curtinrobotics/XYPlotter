@@ -46,6 +46,28 @@ def makeEllipse(plo, i):
     plo.draw_arc(i.cx, i.cy, i.rx, i.ry, 0, 360, 100)
     plo.addPoint("up")
 
+"""Create Line"""
+def makeLine(plo, i):
+    pass
+    #Add line code here
+    # "i" is the item, get attributes from "i"
+    # e.g. i.x, i.y, i.length ect.
+    # plo is the points list object (the list of points)
+    # plo.addPoint(sel, x, y)
+    # sel is selection (takes string "point", "up", "down")
+    # if up/down, nothing for x or y
+    # if point, add x and y cord of point
+
+"""Create PolyLine"""
+def makePolyline(plo, i):
+    pass
+    #Add polyline code here
+
+"""Create Polygon"""
+def makePolygon(plo, i):
+    pass
+    #Add polygon code here
+
 """Create Paths"""
 def makePath(plo, i):
     pathCommands = {"M": 2,"L": 2,"H": 1,"V": 1,"C": 6,"S": 4,"Q": 4,"T": 2,"A": 99,"Z": 0}
@@ -252,6 +274,9 @@ def parseObjects(shapeObjList):
                 makeRect(plo, i)
             if i.shapeName == "circle" or i.shapeName == "ellipse":
                 makeEllipse(plo, i)
+            if i.shapeName == "line":
+                makeLine(plo, i)
+            #add rest here ##############################################################
             if i.shapeName == "path":
                 makePath(plo, i)
         else:

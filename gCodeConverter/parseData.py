@@ -6,7 +6,7 @@ parseData.py - parse file string into objects
 from gCodeConverterObjects import Shape
 
 #Constants
-SHAPE_LIST = ["path", "rect", "circle", "ellipse"]  # not  implemented: , "line", "polyline", "polygon"]
+SHAPE_LIST = ["path", "rect", "circle", "ellipse", "line", "polyline", "polygon"]  # not  implemented: , "line", "polyline", "polygon"]
 FORMAT_SYSTAX = ["svg"]
 
 """Gets data from file string and retruns dict"""

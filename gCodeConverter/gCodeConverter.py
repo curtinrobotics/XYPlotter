@@ -16,14 +16,10 @@ from parseObject import parseObjects
 from turtleOutput import drawPointsTurtle, pointReduction
 
 # Constants
-FILE = "pathTest.svg"  # Source file for plotting
-
+FILE = "sgvFiles/pathTest.svg"  # Source file for plotting
 
 # Import svg file
 fileText = fileRunner(FILE)
-
-with open(FILE, "r") as fileObj:
-    fileText = fileObj.read()
 
 # Parse data into objects
 # Split file string into shape list
