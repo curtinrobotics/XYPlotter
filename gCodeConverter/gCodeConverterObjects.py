@@ -1,5 +1,5 @@
 """
-gCodeConverterObjects.py - attrubute objects for "gCodeConverter.py"
+gCodeConverterObjects.py - objects, just a bunch of objects
 
 NOTE: Due to python not accepting hyphens "-" as valid variables,
         all attribute with hyphens have been replaced with underscores "_"
@@ -7,10 +7,10 @@ NOTE: Due to python not accepting hyphens "-" as valid variables,
 """
 from typing import Tuple
 
-
+"""Shapes with attrubutes from svg files """
 class Shape():
-    """Shapes from svg files"""
 
+    """Constructor created blank shape to be added on later"""
     def __init__(self, shapeName):
         self.shapeName = shapeName
         # Hierarchy of shapes:
@@ -56,9 +56,8 @@ class Shape():
         self.fill = "black"  #str# Color of shape
 
 
-
+    """Adds attribute to shape"""
     def add(self, attribute, value):
-        """Adds attribute to shape"""
         # Is in same order as "__init__" function
         foundAttribute = True
         if attribute == "x":
@@ -137,6 +136,7 @@ class Shape():
             foundAttribute = False
         return foundAttribute
     
+    """Checks if a shape is valid"""
     def checkShape(self):
         validObject = False
         if self.shapeName == "rect":
@@ -160,6 +160,32 @@ class Shape():
             if self.d != "":
                 validObject = True
         
-    
-
         return validObject
+
+
+"""Object for holding list data from pased objects"""
+class pointsListObj():
+
+    """Constructor created blank list to be added to"""
+    def __init__(self):
+        self.pointsList = []
+
+    """Adds points to list"""
+    def addPoint(self, sel, xPos=0, yPos=0):
+        if sel == "point":
+            self.pointsList.append(xPos)
+            self.pointsList.append(yPos)
+        elif sel == "up" or sel == "down":
+            self.pointsList.append(sel)
+        else:
+            print("addPoint error, \"" + str(sel) + "\" not valid selection")
+            raise TypeError("addPoint error, \"" + str(sel) + "\" not valid selection")
+    
+    """Adds points in arc shape with radius r, starting at sDegree"""
+    def draw_arc(self, xPos, yPos, rx, ry, sDegree, degree, res):
+        sRad = sDegree * math.pi/180  # Start pos
+        rad = degree * math.pi/180  # Move amount
+        for step in range(res+1):
+            x = xPos + rx * math.cos((rad/res)*step + sRad)
+            y = yPos + ry * math.sin((rad/res)*step + sRad)
+            self.addPoint("point", x, y)
