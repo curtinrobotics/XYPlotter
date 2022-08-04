@@ -13,6 +13,7 @@ Overview:
 from gCodeConverterObjects import Shape
 from parseObject import parseObjects
 from turtleOutput import drawPointsTurtle, pointReduction
+from fileIO import fileRunner
 import math
 import time
 
@@ -73,6 +74,8 @@ gData = {}
 pointsList = []
 
 # Import svg file
+fileText = fileRunner(FILE)
+
 with open(FILE, "r") as fileObj:
     fileText = fileObj.read()
 

@@ -6,7 +6,7 @@ turtleOuput - outputs turtle image from points list
 import turtle
 
 # Constants
-IMAGE_SCALING = 1.5  # Scale image to fit screen (>0)
+IMAGE_SCALING = 0.9  # Scale image to fit screen (>0)
 DRAWING_DELAY = 0  # Delay between drawing points (0-30)
 
 """Reduces unnecessary resolution from points list and finds max/min xy points"""
@@ -46,13 +46,14 @@ def pointReduction(pointsList):
 """Draws image from points list using turtle"""
 def drawPointsTurtle(pointsList, maxPoints):
     # Turtle settings for screen
+    t = turtle.Turtle()
     screen = turtle.Screen()
     canvasWidth = (maxPoints[0]-maxPoints[2])*IMAGE_SCALING
     canvasHeight = (maxPoints[1]-maxPoints[3])*IMAGE_SCALING
     turtle.screensize(canvasWidth, canvasHeight)
     screen.setup(canvasWidth+50, canvasHeight+50)
     turtle.tracer(1, DRAWING_DELAY)
-    t = turtle.Turtle()
+    
     t.hideturtle()
     t.left(90)
 
