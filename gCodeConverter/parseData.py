@@ -4,6 +4,7 @@ parseData.py - parse file string into objects
 """
 # Libraries
 from gCodeConverterObjects import Shape
+from fileIO import printe, printw, printd, printp
 
 #Constants
 SHAPE_LIST = ["path", "rect", "circle", "ellipse", "line", "polyline", "polygon"]  # not  implemented: , "line", "polyline", "polygon"]
@@ -42,16 +43,20 @@ def createShape(shapeName, shapeDataDict, gData):
     newShape = Shape(shapeName)
     for item in gData:
         itemAdded = newShape.add(item, gData[item])
-        if itemAdded:
-            print("Successfully added\t" + str(item) + "\tto " + str(shapeName))
+        if itemAdded == "success":
+            printd("Successfully added\t" + str(item) + "\tto " + str(shapeName))
+        elif itemAdded == "warning":
+            printw("Warning: added\t" + str(item) + "\tto " + str(shapeName) + " but not implemented")
         else:
-            print("Could not find\t\t" + str(item) + "\tin " + str(shapeName))
+            printe("Could not find\t\t" + str(item) + "\tin " + str(shapeName))
     for item in shapeDataDict:
         itemAdded = newShape.add(item, shapeDataDict[item])
-        if itemAdded:
-            print("Successfully added\t" + str(item) + "\tto " + str(shapeName))
+        if itemAdded == "success":
+            printd("Successfully added\t" + str(item) + "\tto " + str(shapeName))
+        elif itemAdded == "warning":
+            printw("Warning: added\t" + str(item) + "\tto " + str(shapeName) + " but not implemented")
         else:
-            print("Could not find\t\t" + str(item) + "\tin " + str(shapeName))
+            printe("Could not find\t\t" + str(item) + "\tin " + str(shapeName))
     return newShape
 
 """Split file string into shape list"""
@@ -72,24 +77,24 @@ def objCreate(shapeStrList):
             objName = item.split()[0]
             if objName in SHAPE_LIST:
                 # Create shape object
-                print("Creating object: " + objName)
+                printd("\nCreating object: " + objName)
                 objDict = getObjData(item)
                 shapeObj = createShape(objName, objDict, gData)
                 shapeObjList.append(shapeObj)
             elif objName in FORMAT_SYSTAX:
-                print(objName + " format")
+                printd(objName + " format")
             elif objName == "g":
                 # Creates g container
-                print("Open g container")
+                printd("\nOpen g container")
                 gData = getObjData(item)
             elif objName == "/g>":
                 # Close g container
-                print("Close g container")
+                printd("Close g container")
                 gData = {}
             elif "/" in objName:
-                print("Closing: " + str(objName[1:-1]))
+                printd("Closing: " + str(objName[1:-1]))
             else:
-                print("What dis: " + str(objName))
+                printe("What dis: " + str(objName))
     
     return shapeObjList
 

@@ -3,8 +3,8 @@ parseObject.py - parse object data into points list
 
 """
 # Libraries
-from turtle import TurtleScreen
 from gCodeConverterObjects import pointsListObj
+from fileIO import printe, printw, printd, printp
 
 """Create Rectangle"""
 def makeRect(plo, i):
@@ -70,14 +70,14 @@ def makePolygon(plo, i):
 
 """Create Paths"""
 def makePath(plo, i):
-    pathCommands = {"M": 2,"L": 2,"H": 1,"V": 1,"C": 6,"S": 4,"Q": 4,"T": 2,"A": 99,"Z": 0}
-    fullPathCommands = {"M": 2,"L": 2,"H": 2,"V": 2,"C": 8,"S": 8,"Q": 6,"T": 6,"A": 99,"Z": 0}
+    PATH_COMMANDS = {"M": 2,"L": 2,"H": 1,"V": 1,"C": 6,"S": 4,"Q": 4,"T": 2,"A": 99,"Z": 0}
+    FULL_PATH_COMMANDS = {"M": 2,"L": 2,"H": 2,"V": 2,"C": 8,"S": 8,"Q": 6,"T": 6,"A": 99,"Z": 0}
     pathCur = ""
     pathShape = []
 
     # Split path into commands
     for char in i.d:
-        if char.upper() in pathCommands.keys():
+        if char.upper() in PATH_COMMANDS.keys():
             pathCur = "".join(pathCur)
             pathShape.append(pathCur)
             pathCur = []
@@ -85,14 +85,12 @@ def makePath(plo, i):
     pathCur = "".join(pathCur)
     pathShape.append(pathCur)
     pathShape = pathShape[1:]
-    print(pathShape)
+    printd(pathShape)
 
     # Split commands into points
     startPoint = [0, 0]
-    prevPoint = [0, 0]
-    prevCommandPoints= [0, 0]
+    prevCommandPoints = [0, 0]
     prevCommandType = ""
-    prevSmoothPoint = [0, 0]
     commandPointsAdj = [0, 0, 0, 0]
     for command in pathShape:
         command = command.strip()
@@ -114,43 +112,23 @@ def makePath(plo, i):
         for index, point in enumerate(commandPoints):
             commandPoints[index] = float(point)
         # Number of commands per commands
-        commandLength = pathCommands[commandType.upper()]
+        commandLength = PATH_COMMANDS[commandType.upper()]
         if commandLength != 0:
-            commandIterations = (int( len(commandPoints) / commandLength ))
             # Relative vs absolute points
             moveRelative = False
-            if commandType not in pathCommands.keys():
+            if commandType not in PATH_COMMANDS.keys():
                 moveRelative = True
             # Pre-calculation of points
             commandPointsAdjList = []
-            commandPointsAdj = [None]*fullPathCommands[commandType.upper()]
+            commandPointsAdj = [None]*FULL_PATH_COMMANDS[commandType.upper()]
             commandNumOff = 0
             additionalPoints = False
-            print("New command")
-            print(commandType)
+            printd("\n" + str(commandType))
 
             for commandPointNum in range(len(commandPoints)):
                 # Update previous command data if new iteration
                 if commandPointNum % commandLength == 0:
                     # Previous point "clean up"
-                    '''
-                    if len(commandPointsAdj) >= 2:
-                        prevPoint = [commandPointsAdj[-2], commandPointsAdj[-1]]
-                    elif prevCommandType.upper() == "H":
-                        prevPoint = [commandPointsAdj[0], prevPoint[1]]
-                    elif prevCommandType.upper() == "V":
-                        prevPoint = [prevPoint[0], commandPointsAdj[0]]
-                    elif prevCommandType.upper() == "Z":
-                        prevPoint = startPoint
-                    else:
-                        print("prevPoint ERROR")
-                    if commandType.upper() == "M":
-                        startPoint = prevPoint
-                    if prevCommandType.upper() in ["C", "S", "Q", "T"]:
-                        prevSmoothPoint = [moveRelative+commandPointsAdj[-4], commandPointsAdj[-3]]
-                    prevCommandType = commandType
-                    '''
-
                     if commandPointNum != 0:
                         if additionalPoints:
                             commandPointsAdj[2] = commandPointsAdj[4]
@@ -158,8 +136,8 @@ def makePath(plo, i):
                         prevCommandPoints = commandPointsAdj
                         prevCommandType = commandType
                         commandPointsAdjList.append(commandPointsAdj)
-                        commandPointsAdj = [None]*fullPathCommands[commandType.upper()]
-                        commandNumOff = int(-pathCommands[commandType.upper()] * commandPointNum/commandLength)
+                        commandPointsAdj = [None]*FULL_PATH_COMMANDS[commandType.upper()]
+                        commandNumOff = int(-PATH_COMMANDS[commandType.upper()] * commandPointNum/commandLength)
 
                     # Current point extra additions
                     if commandType.upper() == "M":
@@ -196,71 +174,63 @@ def makePath(plo, i):
                             additionalPoints = True
                         commandNumOff += 4
 
-                    ## Working here, close path "Z" needs fixing, add "A"
+                    ## Need add "A" (arc)
 
                 commandPointsAdj[commandPointNum+commandNumOff] = prevCommandPoints[(commandPointNum%2)-2]*moveRelative + commandPoints[commandPointNum]
                 if commandType == "v":
                     commandPointsAdj[commandPointNum+commandNumOff] = prevCommandPoints[(1)-2]*moveRelative + commandPoints[commandPointNum]
             
+            # Previous point "clean up"
             if additionalPoints:
                 commandPointsAdj[2] = commandPointsAdj[4]
                 commandPointsAdj[3] = commandPointsAdj[5]
             commandPointsAdjList.append(commandPointsAdj)
             prevCommandPoints = commandPointsAdj
             prevCommandType = commandType
-            print(commandPointsAdjList)
-            print(commandPoints)
-
+            # Starting point of path
+            if commandType.upper() == "M":
+                startPoint = commandPointsAdjList[0][0:2]
+            
+            printd(commandPoints)
+            printd(commandPointsAdjList)
 
         # Plot points from commands points
         for iterCommandPoints in commandPointsAdjList:
-            print(iterCommandPoints)
-        
             if commandType.upper() == "M":
-                print("Move")
+                printd("Move")
                 plo.addPoint("up")
                 plo.addPoint("point", iterCommandPoints[0], iterCommandPoints[1])
                 plo.addPoint("down")
             elif commandType.upper() == "L":
-                print("Line")
+                printd("Line")
                 plo.addPoint("point", iterCommandPoints[0], iterCommandPoints[1])
             elif commandType.upper() == "H":
-                print("Horizontal line")
+                printd("Horizontal line")
                 plo.addPoint("point", iterCommandPoints[0], iterCommandPoints[1])
             elif commandType.upper() == "V":
-                print("Vertical line")
+                printd("Vertical line")
                 plo.addPoint("point", iterCommandPoints[0], iterCommandPoints[1])
             elif commandType.upper() in ["C", "S"]:
-                print("Curve/Smooth Curve")
+                printd("Curve/Smooth Curve")
                 for i in range(0, 101, 1):
                     i /= 100
                     xPoint = (((1-i)**3) * iterCommandPoints[0]) + (3*i*((1-i)**2) * (iterCommandPoints[2])) + (3*(i**2) * (1-i) * (iterCommandPoints[4])) + (i**3 * (iterCommandPoints[6]))
                     yPoint = (((1-i)**3) * iterCommandPoints[1]) + (3*i*((1-i)**2) * (iterCommandPoints[3])) + (3*(i**2) * (1-i) * (iterCommandPoints[5])) + (i**3 * (iterCommandPoints[7]))
                     plo.addPoint("point", xPoint, yPoint)
             elif commandType.upper() in ["Q", "T"]:
-                print("Quadratic Curve/Smooth Quadratic curve")
+                printd("Quadratic Curve/Smooth Quadratic curve")
                 for i in range(0, 101, 1):
                     i /= 100
                     xPoint = (((1-i)**2) * iterCommandPoints[0]) + (2*i*(1-i) * (iterCommandPoints[2])) + (i**2 * (iterCommandPoints[4]))
                     yPoint = (((1-i)**2) * iterCommandPoints[1]) + (2*i*(1-i) * (iterCommandPoints[3])) + (i**2 * (iterCommandPoints[5]))
                     plo.addPoint("point", xPoint, yPoint)          
             elif commandType.upper() == "A":
-                print("Arc to be added ####################################################")
+                printe("Arc to be added ####################################################")
             elif commandType.upper() == "Z":
-                print("Close path")
-                plo.addPoint("point", iterCommandPoints[0], iterCommandPoints[1]) 
-        
-        #if len(commandPoints) >= 2:
-        #    prevPoint = [prevPoint[0]*moveRelative + commandPoints[-2], prevPoint[1]*moveRelative + commandPoints[-1]]
-        #prevCommandType = commandType
+                printd("Close path")
+                plo.addPoint("point", startPoint[0], startPoint[1])
 
-        #print(commandPoints)
-        #print(prevPoint)
-        #print(prevCommandType)
-        #print(prevSmoothPoint)
-            
-        
-    print()
+    printd()
 
 """Parse objects into list"""
 def parseObjects(shapeObjList):
@@ -268,7 +238,7 @@ def parseObjects(shapeObjList):
     plo = pointsListObj()
 
     for i in shapeObjList:
-        print(i)
+        printd("\nWorking on shape: " + str(i.shapeName))
         if i.checkShape():
             if i.shapeName == "rect":
                 makeRect(plo, i)
@@ -280,7 +250,7 @@ def parseObjects(shapeObjList):
             if i.shapeName == "path":
                 makePath(plo, i)
         else:
-            print("Object invald, not drawing object: " + str(i.shapeName))
+            printe("Object invald, not drawing object: " + str(i.shapeName))
     
 
     return plo.pointsList

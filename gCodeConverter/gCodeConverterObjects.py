@@ -7,8 +7,9 @@ NOTE: Due to python not accepting hyphens "-" as valid variables,
 """
 # Libraries
 import math
+from fileIO import printe, printw, printd, printp
 
-"""Shapes with attrubutes from svg files """
+"""Shapes with attrubutes from svg files"""
 class Shape():
 
     """Constructor created blank shape to be added on later"""
@@ -60,81 +61,87 @@ class Shape():
     """Adds attribute to shape"""
     def add(self, attribute, value):
         # Is in same order as "__init__" function
-        foundAttribute = True
+        foundAttribute = "success"
         if attribute == "x":
             try:
                 self.x = float(value)
             except ValueError as err:
                 foundAttribute = False
-                print(err)
+                printe(err)
         elif attribute == "y":
             try:
                 self.y = float(value)
             except ValueError as err:
                 foundAttribute = False
-                print(err)
+                printe(err)
         elif attribute == "width":
             try:
                 self.width = float(value)
             except ValueError as err:
                 foundAttribute = False
-                print(err)
+                printe(err)
         elif attribute == "height":
             try:
                 self.height = float(value)
             except ValueError as err:
                 foundAttribute = False
-                print(err)
+                printe(err)
         elif attribute == "cx":
             try:
                 self.cx = float(value)
             except ValueError as err:
                 foundAttribute = False
-                print(err)
+                printe(err)
         elif attribute == "cy":
             try:
                 self.cy = float(value)
             except ValueError as err:
                 foundAttribute = False
-                print(err)
+                printe(err)
         elif attribute == "r":
             try:
                 self.r = float(value)
             except ValueError as err:
                 foundAttribute = False
-                print(err)
+                printe(err)
         elif attribute == "rx":
             try:
                 self.rx = float(value)
             except ValueError as err:
                 foundAttribute = False
-                print(err)
+                printe(err)
         elif attribute == "ry":
             try:
                 self.ry = float(value)
             except ValueError as err:
                 foundAttribute = False
-                print(err)
+                printe(err)
         elif attribute == "d":
             self.d = value
         elif attribute == "style": 
             self.style = value
+            foundAttribute = "warning"
         elif attribute == "stroke":
             self.stroke = value
+            foundAttribute = "warning"
         elif attribute == "stroke-width":
             try:
                 self.stroke_width = float(value)
+                foundAttribute = "warning"
             except ValueError as err:
                 foundAttribute = False
-                print(err)
+                printe(err)
         elif attribute == "stroke-linecap":
             self.stroke_linecap = value
+            foundAttribute = "warning"
         elif attribute == "stroke-dasharray":
             self.stroke_dasharray = value
+            foundAttribute = "warning"
         elif attribute == "fill":
             self.fill = value
+            foundAttribute = "warning"
         else:
-            foundAttribute = False
+            foundAttribute = "error"
         return foundAttribute
     
     """Checks if a shape is valid"""
@@ -185,7 +192,7 @@ class pointsListObj():
             self.pointsList.append(sel)
             self.pointsList.append(sel)
         else:
-            print("addPoint error, \"" + str(sel) + "\" not valid selection")
+            printe("addPoint error, \"" + str(sel) + "\" not valid selection")
             raise TypeError("addPoint error, \"" + str(sel) + "\" not valid selection")
     
     """Adds points in arc shape with radius r, starting at sDegree"""

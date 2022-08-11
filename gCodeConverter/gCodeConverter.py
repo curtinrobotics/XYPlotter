@@ -10,16 +10,14 @@ Overview:
 
 """
 # Libraries
+import constants
 from fileIO import fileRunner
 from parseData import splitStrip, objCreate
 from parseObject import parseObjects
 from turtleOutput import drawPointsTurtle, pointReduction
 
-# Constants
-FILE = "sgvFiles/pathTest.svg"  # Source file for plotting
-
 # Import svg file
-fileText = fileRunner(FILE)
+fileText = fileRunner(constants.FILE)
 
 # Parse data into objects
 # Split file string into shape list
