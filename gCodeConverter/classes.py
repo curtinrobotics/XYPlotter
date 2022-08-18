@@ -1,5 +1,5 @@
 """
-gCodeConverterObjects.py - objects, just a bunch of objects
+classes.py - classes, just a bunch of classes
 
 NOTE: Due to python not accepting hyphens "-" as valid variables,
         all attribute with hyphens have been replaced with underscores "_"
@@ -7,7 +7,7 @@ NOTE: Due to python not accepting hyphens "-" as valid variables,
 """
 # Libraries
 import math
-from fileIO import printe, printw, printd, printp
+from IO import printe, printw, printd, printp
 
 """Shapes with attrubutes from svg files"""
 class Shape():
@@ -24,6 +24,7 @@ class Shape():
         # Path (path)
 
         # Needed for General
+        self.transform = ""  #str# transformation of shape
 
         # Needed for General Shape
         # Needed for Rectangle
@@ -62,7 +63,10 @@ class Shape():
     def add(self, attribute, value):
         # Is in same order as "__init__" function
         foundAttribute = "success"
-        if attribute == "x":
+        if attribute == "transform":
+            self.transform = value
+            foundAttribute = "warning"
+        elif attribute == "x":
             try:
                 self.x = float(value)
             except ValueError as err:
@@ -176,8 +180,8 @@ class Shape():
         return validObject
 
 
-"""Object for holding list data from pased objects"""
-class pointsListObj():
+"""Class for holding list data from pased objects"""
+class PointsListObj():
 
     """Constructor created blank list to be added to"""
     def __init__(self):
@@ -203,3 +207,10 @@ class pointsListObj():
             x = xPos + rx * math.cos((rad/res)*step + sRad)
             y = yPos + ry * math.sin((rad/res)*step + sRad)
             self.addPoint("point", x, y)
+    
+    """Adds plo on end of plo"""
+    def addPlo(self, plo):
+        for item in plo.pointsList:
+            self.pointsList.append(item)
+
+            

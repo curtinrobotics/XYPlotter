@@ -1,5 +1,5 @@
 """
-gCodeConverter - convert svg file to g-code
+main.py - convert svg file to g(ish)-code
 
 Overview:
   - Read file data
@@ -11,13 +11,12 @@ Overview:
 """
 # Libraries
 import constants
-from fileIO import fileRunner
-from parseData import splitStrip, objCreate
-from parseObject import parseObjects
-from turtleOutput import drawPointsTurtle, pointReduction
+import IO
+from parseDataToObject import splitStrip, objCreate
+from parseObjectToPoints import parseObjects, pointReduction
 
 # Import svg file
-fileText = fileRunner(constants.FILE)
+fileText = IO.readFileData(constants.FILE)
 
 # Parse data into objects
 # Split file string into shape list
@@ -29,11 +28,10 @@ shapeObjList = objCreate(shapeStrList)
 # Parse objects into points
 pointsList = parseObjects(shapeObjList)
 
-# Output points to screen
 # Point reduction
 maxPoints = pointReduction(pointsList)
 
 # Turtle output
-drawPointsTurtle(pointsList, maxPoints)
+IO.drawPointsTurtle(pointsList, maxPoints)
 
-input()  # delay till enter
+input()  # delay to keep drawing open

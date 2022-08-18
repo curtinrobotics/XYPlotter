@@ -1,12 +1,14 @@
 """
-parseData.py - parse file string into objects
+parseDatatoObject.py - parse file data (as a string) into objects
 
 """
 # Libraries
-from gCodeConverterObjects import Shape
-from fileIO import printe, printw, printd, printp
+from classes import Shape
+from IO import printe, printw, printd, printp
 
 #Constants
+# Full shape list: <a>, <circle>, <clipPath>, <defs>, <ellipse>, <foreignObject>, <g>, <image>, <line>, <path>, <polygon>, <polyline>, <rect>, <switch>, <text>, <use>
+# Todo shape list: <a>, <clipPath>, <defs>, <foreignObject>, <g>, <image>, <line>, <path>, <polygon>, <polyline>, <switch>, <text>, <use>
 SHAPE_LIST = ["path", "rect", "circle", "ellipse", "line", "polyline", "polygon"]  # not  implemented: , "line", "polyline", "polygon"]
 FORMAT_SYSTAX = ["svg"]
 

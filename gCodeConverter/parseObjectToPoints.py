@@ -1,10 +1,10 @@
 """
-parseObject.py - parse object data into points list
+parseObjectToPoints.py - parse object data into points list
 
 """
 # Libraries
-from gCodeConverterObjects import pointsListObj
-from fileIO import printe, printw, printd, printp
+from classes import PointsListObj
+from IO import printe, printw, printd, printp
 
 """Create Rectangle"""
 def makeRect(plo, i):
@@ -232,13 +232,53 @@ def makePath(plo, i):
 
     printd()
 
+"""Transform points in shape with transform attribute"""
+def transformShape(plo, i):
+    # Transform function: matrix, translate, scale, rotate, skewX, skewY
+    if "translate" in i.transform:
+        printd("Found translate at " + str(i.transform.index("translate")))
+        # Get translate points as string
+        pointStr = ""
+        pointIndex = 0
+        pointIndexOffset = i.transform.index("translate") + len("translate") + 1
+        while i.transform[pointIndex + pointIndexOffset] != ")":
+            pointStr += i.transform[pointIndex + pointIndexOffset]
+            pointIndex += 1
+        
+        # Get translate points as floats
+        pointInt = [0.0, 0.0]
+        curPoint = ""
+        for char in pointStr:
+            if char == "," or char == " " or (char == "-" and curPoint != ""):
+                pointInt[0] = float(curPoint)
+                if char == "-":
+                    curPoint = char
+                else:
+                    curPoint = ""
+            else:
+                curPoint += char
+        pointInt[1] = float(curPoint)
+        printd(pointInt)
+
+        # Translate plo points
+        for index in range(0, len(plo.pointsList), 2):
+            if plo.pointsList[index] != "up" and plo.pointsList[index] != "down":
+                plo.pointsList[index] += pointInt[0]
+                plo.pointsList[index+1] += pointInt[1]
+                
+
+                    
+
+
+
 """Parse objects into list"""
 def parseObjects(shapeObjList):
     # New list object to add points to
-    plo = pointsListObj()
+    masterPlo = PointsListObj()
 
     for i in shapeObjList:
         printd("\nWorking on shape: " + str(i.shapeName))
+        plo = PointsListObj()
         if i.checkShape():
             if i.shapeName == "rect":
                 makeRect(plo, i)
@@ -251,6 +291,42 @@ def parseObjects(shapeObjList):
                 makePath(plo, i)
         else:
             printe("Object invald, not drawing object: " + str(i.shapeName))
+        
+        if i.transform != "":
+            transformShape(plo, i)
+        
+        masterPlo.addPlo(plo)
     
 
-    return plo.pointsList
+    return masterPlo.pointsList
+
+
+"""Reduces unnecessary resolution from points list and finds max/min xy points"""
+def pointReduction(pointsList):
+    # First loop: rounding
+    for index, item in enumerate(pointsList):
+        if item != "up" and item != "down":
+            pointsList[index] = round(item, 1)
+
+    # Second loop: removing duplicate point; finding max X and Y points
+    maxXPoint = 0
+    maxYPoint = 0
+    minXPoint = 0
+    minYPoint = 0
+    i = 0
+    while i < len(pointsList) - 2:
+        if pointsList[i] != "up" and pointsList[i] != "down":
+            if pointsList[i] > maxXPoint:
+                maxXPoint = pointsList[i]
+            if pointsList[i+1] > maxYPoint:
+                maxYPoint = pointsList[i+1]
+            if pointsList[i] < minXPoint:
+                minXPoint = pointsList[i]
+            if pointsList[i+1] < minYPoint:
+                minYPoint = pointsList[i+1]
+
+            if pointsList[i] == pointsList[i+2] and pointsList[i+1] == pointsList[i+3]:
+                del pointsList[i:i+2]
+        i += 2
+    
+    return maxXPoint, maxYPoint, minXPoint, minYPoint
