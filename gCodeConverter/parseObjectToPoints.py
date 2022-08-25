@@ -3,6 +3,7 @@ parseObjectToPoints.py - parse object data into points list
 
 """
 # Libraries
+import math
 from classes import PointsListObj
 from IO import printe, printw, printd, printp
 
@@ -234,38 +235,81 @@ def makePath(plo, i):
 
 """Transform points in shape with transform attribute"""
 def transformShape(plo, i):
-    # Transform function: matrix, translate, scale, rotate, skewX, skewY
-    if "translate" in i.transform:
-        printd("Found translate at " + str(i.transform.index("translate")))
-        # Get translate points as string
-        pointStr = ""
-        pointIndex = 0
-        pointIndexOffset = i.transform.index("translate") + len("translate") + 1
-        while i.transform[pointIndex + pointIndexOffset] != ")":
-            pointStr += i.transform[pointIndex + pointIndexOffset]
-            pointIndex += 1
-        
-        # Get translate points as floats
-        pointInt = [0.0, 0.0]
-        curPoint = ""
-        for char in pointStr:
-            if char == "," or char == " " or (char == "-" and curPoint != ""):
-                pointInt[0] = float(curPoint)
-                if char == "-":
-                    curPoint = char
-                else:
-                    curPoint = ""
-            else:
-                curPoint += char
-        pointInt[1] = float(curPoint)
-        printd(pointInt)
+    # Transform functions: matrix, translate, scale, rotate, skewX, skewY
+    if "matrix" in i.transform:
+        pointInt = _getTransformPoints("matrix", i)
+        # Translate plo points
+        for index in range(0, len(plo.pointsList), 2):
+            if plo.pointsList[index] != "up" and plo.pointsList[index] != "down":
+                newX = pointInt[0]*plo.pointsList[index] + pointInt[2]*plo.pointsList[index+1] + pointInt[4]
+                newY = pointInt[1]*plo.pointsList[index] + pointInt[3]*plo.pointsList[index+1] + pointInt[5]
+                plo.pointsList[index] = newX
+                plo.pointsList[index+1] = newY
 
+    if "translate" in i.transform:
+        pointInt = _getTransformPoints("translate", i)
+        if len(pointInt) == 1:
+            pointInt.append(0)
         # Translate plo points
         for index in range(0, len(plo.pointsList), 2):
             if plo.pointsList[index] != "up" and plo.pointsList[index] != "down":
                 plo.pointsList[index] += pointInt[0]
                 plo.pointsList[index+1] += pointInt[1]
+    
+    if "scale" in i.transform:
+        pointInt = _getTransformPoints("scale", i)
+        if len(pointInt) == 1:
+            pointInt.append(pointInt[0])
+        # Translate plo points
+        for index in range(0, len(plo.pointsList), 2):
+            if plo.pointsList[index] != "up" and plo.pointsList[index] != "down":
+                plo.pointsList[index] *= pointInt[0]
+                plo.pointsList[index+1] *= pointInt[1]
+    
+    if "rotate" in i.transform:
+        pointInt = _getTransformPoints("rotate", i)
+        if len(pointInt) == 1:
+            pointInt.append(0)
+            pointInt.append(0)
+        # Translate plo points
+        for index in range(0, len(plo.pointsList), 2):
+            if plo.pointsList[index] != "up" and plo.pointsList[index] != "down":
+                x = plo.pointsList[index] - pointInt[1]
+                y = plo.pointsList[index+1] - pointInt[2]
+                s = math.sin(pointInt[0]*(math.pi/180))
+                c = math.cos(pointInt[0]*(math.pi/180))
+                newX = x*c - y*s
+                newY = x*s + y*c
+                plo.pointsList[index] = newX + pointInt[1]
+                plo.pointsList[index+1] = newY + pointInt[2]
                 
+def _getTransformPoints(word, i):
+    printd("Found " + word + " at " + str(i.transform.index(word)))
+    # Get translate points as string
+    pointStr = ""
+    pointIndex = 0
+    pointIndexOffset = i.transform.index(word) + len(word) + 1
+    while i.transform[pointIndex + pointIndexOffset] != ")":
+        pointStr += i.transform[pointIndex + pointIndexOffset]
+        pointIndex += 1
+    printd(pointStr)
+
+    # Get translate points as floats
+    pointInt = []
+    curPoint = ""
+    for char in pointStr:
+        if char == "," or char == " " or (char == "-" and curPoint != ""):
+            pointInt.append(float(curPoint))
+            if char == "-":
+                curPoint = char
+            else:
+                curPoint = ""
+        else:
+            curPoint += char
+    pointInt.append(float(curPoint))
+    printd(pointInt)
+    
+    return pointInt
 
                     
 
@@ -297,7 +341,6 @@ def parseObjects(shapeObjList):
         
         masterPlo.addPlo(plo)
     
-
     return masterPlo.pointsList
 
 
@@ -329,4 +372,12 @@ def pointReduction(pointsList):
                 del pointsList[i:i+2]
         i += 2
     
-    return maxXPoint, maxYPoint, minXPoint, minYPoint
+    # Third loop: shifting so all points positive
+    for i in range(0, len(pointsList), 2):
+        if pointsList[i] != "up" and pointsList[i] != "down":
+            pointsList[i] -= minXPoint
+            pointsList[i+1] -= minYPoint
+    maxXPoint -= minXPoint
+    maxYPoint -= minYPoint
+    
+    return maxXPoint, maxYPoint

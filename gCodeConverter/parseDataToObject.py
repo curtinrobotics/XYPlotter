@@ -43,14 +43,15 @@ def getObjData(objData):
 def createShape(shapeName, shapeDataDict, gData):
     # Note: some objects may not exist
     newShape = Shape(shapeName)
-    for item in gData:
-        itemAdded = newShape.add(item, gData[item])
-        if itemAdded == "success":
-            printd("Successfully added\t" + str(item) + "\tto " + str(shapeName))
-        elif itemAdded == "warning":
-            printw("Warning: added\t" + str(item) + "\tto " + str(shapeName) + " but not implemented")
-        else:
-            printe("Could not find\t\t" + str(item) + "\tin " + str(shapeName))
+    for gDict in gData:
+        for item in gDict:
+            itemAdded = newShape.add(item, gDict[item])
+            if itemAdded == "success":
+                printd("Successfully added\t" + str(item) + "\tto " + str(shapeName))
+            elif itemAdded == "warning":
+                printw("Warning: added\t" + str(item) + "\tto " + str(shapeName) + " but not implemented")
+            else:
+                printe("Could not find\t\t" + str(item) + "\tin " + str(shapeName))
     for item in shapeDataDict:
         itemAdded = newShape.add(item, shapeDataDict[item])
         if itemAdded == "success":
@@ -73,7 +74,7 @@ def splitStrip(fileText):
 """Create objects from shape list"""
 def objCreate(shapeStrList):
     shapeObjList = []
-    gData = {}
+    gData = []
     for item in shapeStrList:
         if item != "":
             objName = item.split()[0]
@@ -88,11 +89,11 @@ def objCreate(shapeStrList):
             elif objName == "g":
                 # Creates g container
                 printd("\nOpen g container")
-                gData = getObjData(item)
+                gData.append(getObjData(item))
             elif objName == "/g>":
                 # Close g container
                 printd("Close g container")
-                gData = {}
+                gData.pop()
             elif "/" in objName:
                 printd("Closing: " + str(objName[1:-1]))
             else:

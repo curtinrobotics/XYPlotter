@@ -10,10 +10,10 @@ DEBUG_OUTPUT = True      # For general debugging
 PROGRESS_OUTPUT = False  # For information to an end user
 
 # File IO
-FILE = "sgvFiles/inkScapeTest.svg"  # Source file for plotting
+FILE = "sgvFiles/transformTest.svg"  # Source file for plotting
 
 # Turtle Output
-IMAGE_SCALING = 0.6  # Scale image to fit screen (>0)
+IMAGE_SCALING = 10  # Scale image to fit screen (>0)
 DRAWING_DELAY = 0  # Delay between drawing points (0-30)
 
 # Points Resolution

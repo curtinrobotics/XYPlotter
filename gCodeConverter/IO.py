@@ -51,8 +51,8 @@ def readFileData(file):
 def drawPointsTurtle(pointsList, maxPoints):
     # Turtle settings for screen
     screen = turtle.Screen()
-    canvasWidth = (maxPoints[0]-maxPoints[2])*constants.IMAGE_SCALING
-    canvasHeight = (maxPoints[1]-maxPoints[3])*constants.IMAGE_SCALING
+    canvasWidth = maxPoints[0]*constants.IMAGE_SCALING
+    canvasHeight = maxPoints[1]*constants.IMAGE_SCALING
     turtle.screensize(canvasWidth, canvasHeight)
     screen.setup(canvasWidth+50, canvasHeight+50)
     turtle.tracer(1, constants.DRAWING_DELAY)
