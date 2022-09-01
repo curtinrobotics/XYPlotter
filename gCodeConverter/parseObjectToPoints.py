@@ -7,6 +7,40 @@ import math
 from classes import PointsListObj
 from IO import printe, printw, printd, printp
 
+"""Create Line"""
+def makeLine(plo, i):
+    plo.addPoint("up")
+    plo.addPoint("point", i.x1, i.y1)
+    plo.addPoint("down")
+    plo.addPoint("point", i.x2, i.y2)
+    plo.addPoint("up")
+
+"""Create Polyline and Polygon"""
+def makePolyline(plo, i):
+    # Get line points as floats
+    pointInt = []
+    curPoint = ""
+    for char in i.points:
+        if char == "," or char == " " or (char == "-" and curPoint != ""):
+            pointInt.append(float(curPoint))
+            if char == "-":
+                curPoint = char
+            else:
+                curPoint = ""
+        else:
+            curPoint += char
+    pointInt.append(float(curPoint))
+    
+    # Plot points
+    plo.addPoint("up")
+    plo.addPoint("point", pointInt[0], pointInt[1])
+    plo.addPoint("down")
+    for pointIndex in range(2, len(pointInt), 2):
+        plo.addPoint("point", pointInt[pointIndex], pointInt[pointIndex+1])
+    if i.shapeName == "polygon":
+        plo.addPoint("point", pointInt[0], pointInt[1])
+    plo.addPoint("up")
+
 """Create Rectangle"""
 def makeRect(plo, i):
     if i.rx == None:
@@ -46,28 +80,6 @@ def makeEllipse(plo, i):
     plo.addPoint("down")
     plo.draw_arc(i.cx, i.cy, i.rx, i.ry, 0, 360, 100)
     plo.addPoint("up")
-
-"""Create Line"""
-def makeLine(plo, i):
-    pass
-    #Add line code here
-    # "i" is the item, get attributes from "i"
-    # e.g. i.x, i.y, i.length ect.
-    # plo is the points list object (the list of points)
-    # plo.addPoint(sel, x, y)
-    # sel is selection (takes string "point", "up", "down")
-    # if up/down, nothing for x or y
-    # if point, add x and y cord of point
-
-"""Create PolyLine"""
-def makePolyline(plo, i):
-    pass
-    #Add polyline code here
-
-"""Create Polygon"""
-def makePolygon(plo, i):
-    pass
-    #Add polygon code here
 
 """Create Paths"""
 def makePath(plo, i):
@@ -282,7 +294,21 @@ def transformShape(plo, i):
                 newY = x*s + y*c
                 plo.pointsList[index] = newX + pointInt[1]
                 plo.pointsList[index+1] = newY + pointInt[2]
-                
+    
+    if "skewX" in i.transform:
+        pointInt = _getTransformPoints("skewX", i)
+        # Translate plo points
+        for index in range(0, len(plo.pointsList), 2):
+            if plo.pointsList[index] != "up" and plo.pointsList[index] != "down":
+                plo.pointsList[index] = plo.pointsList[index] + plo.pointsList[index+1]*math.tan(pointInt[0]*(math.pi/180))
+    
+    if "skewY" in i.transform:
+        pointInt = _getTransformPoints("skewY", i)
+        # Translate plo points
+        for index in range(0, len(plo.pointsList), 2):
+            if plo.pointsList[index] != "up" and plo.pointsList[index] != "down":
+                plo.pointsList[index+1] = plo.pointsList[index+1] + plo.pointsList[index]*math.tan(pointInt[0]*(math.pi/180))
+
 def _getTransformPoints(word, i):
     printd("Found " + word + " at " + str(i.transform.index(word)))
     # Get translate points as string
@@ -311,9 +337,6 @@ def _getTransformPoints(word, i):
     
     return pointInt
 
-                    
-
-
 
 """Parse objects into list"""
 def parseObjects(shapeObjList):
@@ -324,13 +347,14 @@ def parseObjects(shapeObjList):
         printd("\nWorking on shape: " + str(i.shapeName))
         plo = PointsListObj()
         if i.checkShape():
+            if i.shapeName == "line":
+                makeLine(plo, i)
+            if i.shapeName == "polyline" or i.shapeName == "polygon":
+                makePolyline(plo, i)
             if i.shapeName == "rect":
                 makeRect(plo, i)
             if i.shapeName == "circle" or i.shapeName == "ellipse":
                 makeEllipse(plo, i)
-            if i.shapeName == "line":
-                makeLine(plo, i)
-            #add rest here ##############################################################
             if i.shapeName == "path":
                 makePath(plo, i)
         else:

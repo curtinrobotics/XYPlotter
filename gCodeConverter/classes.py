@@ -7,6 +7,7 @@ NOTE: Due to python not accepting hyphens "-" as valid variables,
 """
 # Libraries
 import math
+from multiprocessing.sharedctypes import Value
 from IO import printe, printw, printd, printp
 
 """Shapes with attrubutes from svg files"""
@@ -17,14 +18,27 @@ class Shape():
         self.shapeName = shapeName
         # Hierarchy of shapes:
         # General
+        #   Line (line)
+        #   Polyline (polyline)
+        #   Polygon (polygon)
         # General Shape
         #   Rectangle (rect)
         #   Circle (circle)
         #   Ellipse (ellipse)
         # Path (path)
+        # Text (text)
 
         # Needed for General
         self.transform = ""  #str# transformation of shape
+
+        # Needed for Line
+        self.x1 = None  #float# x position of start of line
+        self.y1 = None  #float# y position of start of line
+        self.x2 = None  #float# x position of end of line
+        self.y2 = None  #float# y position of end of line
+
+        # Needed for Polyline and Polygon
+        self.points = None  #str# List of points
 
         # Needed for General Shape
         # Needed for Rectangle
@@ -43,7 +57,10 @@ class Shape():
         self.ry = None  #float# Y radius of ellipse (also used in rectangle)
 
         # Needed for Path
-        self.d = None
+        self.d = None  #str# List of instructions/points
+
+        # Needed for Text
+        self.text = None  #str# Text to display
 
         # Not needed to create object, has default value
         # For General
@@ -65,7 +82,32 @@ class Shape():
         foundAttribute = "success"
         if attribute == "transform":
             self.transform = value
-            foundAttribute = "warning"
+        elif attribute == "x1":
+            try:
+                self.x1 = float(value)
+            except ValueError as err:
+                foundAttribute = False
+                printe(err)
+        elif attribute == "y1":
+            try:
+                self.y1 = float(value)
+            except ValueError as err:
+                foundAttribute = False
+                printe(err)
+        elif attribute == "x2":
+            try:
+                self.x2 = float(value)
+            except ValueError as err:
+                foundAttribute = False
+                printe(err)
+        elif attribute == "y2":
+            try:
+                self.y2 = float(value)
+            except ValueError as err:
+                foundAttribute = False
+                printe(err)
+        elif attribute == "points":
+            self.points = value
         elif attribute == "x":
             try:
                 self.x = float(value)
@@ -122,6 +164,9 @@ class Shape():
                 printe(err)
         elif attribute == "d":
             self.d = value
+        elif attribute == "text":
+            self.text = value
+            foundAttribute = "warning"
         elif attribute == "style": 
             self.style = value
             foundAttribute = "warning"
@@ -151,28 +196,35 @@ class Shape():
     """Checks if a shape is valid"""
     def checkShape(self):
         validObject = False
+        if self.shapeName == "line":
+            if self.x1 != None \
+                and self.y1 != None \
+                and self.x2 != None \
+                and self.y2 != None:
+                    validObject = True
+        if self.shapeName == "polyline":
+            if self.points != "":
+                validObject = True
+        if self.shapeName == "polygon":
+            if self.points != "":
+                validObject = True
         if self.shapeName == "rect":
-            if self.x >= 0 \
-                and self.y >= 0 \
+            if self.x != None \
+                and self.y != None \
                 and self.width >= 0 \
                 and self.height >= 0:
                     validObject = True
         if self.shapeName == "circle":
-            if self.cx >= 0 \
-                and self.cy >= 0 \
+            if self.cx != None \
+                and self.cy != None \
                 and self.r >= 0:
                     validObject = True
         if self.shapeName == "ellipse":
-            if self.cx >= 0 \
-                and self.cy >= 0 \
+            if self.cx != None \
+                and self.cy != None \
                 and self.rx >= 0 \
                 and self.ry >= 0:
                     validObject = True
-        if self.shapeName == "line":
-            pass
-            #Add min requirement here
-            #e.g. needs at least start and end points
-        #Add other shapes here ####################################################################
         if self.shapeName == "path":
             if self.d != "":
                 validObject = True

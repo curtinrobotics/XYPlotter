@@ -8,12 +8,12 @@ from IO import printe, printw, printd, printp
 
 #Constants
 # Full shape list: <a>, <circle>, <clipPath>, <defs>, <ellipse>, <foreignObject>, <g>, <image>, <line>, <path>, <polygon>, <polyline>, <rect>, <switch>, <text>, <use>
-# Todo shape list: <a>, <clipPath>, <defs>, <foreignObject>, <g>, <image>, <line>, <path>, <polygon>, <polyline>, <switch>, <text>, <use>
-SHAPE_LIST = ["path", "rect", "circle", "ellipse", "line", "polyline", "polygon"]  # not  implemented: , "line", "polyline", "polygon"]
+# Todo shape list: <a>, <clipPath>, <defs>, <foreignObject>, <g>, <image>, <path>.arch, <switch>, <text>, <use>
+SHAPE_LIST = ["line", "polyline", "polygon", "rect", "circle", "ellipse", "path", "text"]
 FORMAT_SYSTAX = ["svg"]
 
 """Gets data from file string and retruns dict"""
-def getObjData(objData):
+def getObjData(objData, objName):
     # Make object data into list
     objData = objData.split("\"")
     objDataClean = []
@@ -25,7 +25,13 @@ def getObjData(objData):
             item = item.split()
             item = item[1].strip()
         objDataClean.append(item)
-    objDataClean = objDataClean[:-1]
+    if objName == "text":
+        textData = objDataClean[-1].strip(">")   
+        objDataClean = objDataClean[:-1]
+        objDataClean.append("text")
+        objDataClean.append(textData)
+    else:
+        textData = objDataClean[-1].strip(">")
     # Make list into dict
     objDataDict = {}
     for index, item in enumerate(objDataClean):
@@ -81,7 +87,7 @@ def objCreate(shapeStrList):
             if objName in SHAPE_LIST:
                 # Create shape object
                 printd("\nCreating object: " + objName)
-                objDict = getObjData(item)
+                objDict = getObjData(item, objName)
                 shapeObj = createShape(objName, objDict, gData)
                 shapeObjList.append(shapeObj)
             elif objName in FORMAT_SYSTAX:
@@ -89,7 +95,7 @@ def objCreate(shapeStrList):
             elif objName == "g":
                 # Creates g container
                 printd("\nOpen g container")
-                gData.append(getObjData(item))
+                gData.append(getObjData(item, objName))
             elif objName == "/g>":
                 # Close g container
                 printd("Close g container")
