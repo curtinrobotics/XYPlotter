@@ -1,6 +1,7 @@
 <?xml version="1.0" standalone="no"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" version="1.1"
-baseProfile="full" > <rect x="0" y="0" width="60" height="60" style="stroke: blue;"/>
+baseProfile="full" >
+<rect x="0" y="0" width="60" height="60" style="stroke: blue;"/>
 <rect id="myRect" y = "25" x="25" rx="50" ry="50" width="150" height="150" fill="blue"
 stroke="black" stroke-width="8"/>
 </svg>

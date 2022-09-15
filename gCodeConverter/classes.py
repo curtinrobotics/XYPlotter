@@ -7,7 +7,6 @@ NOTE: Due to python not accepting hyphens "-" as valid variables,
 """
 # Libraries
 import math
-from multiprocessing.sharedctypes import Value
 from IO import printe, printw, printd, printp
 
 """Shapes with attrubutes from svg files"""
@@ -30,6 +29,8 @@ class Shape():
 
         # Needed for General
         self.transform = ""  #str# transformation of shape
+        self.x = None  #float# x position of shape
+        self.y = None  #float# y position of shape
 
         # Needed for Line
         self.x1 = None  #float# x position of start of line
@@ -42,14 +43,12 @@ class Shape():
 
         # Needed for General Shape
         # Needed for Rectangle
-        self.x = None  #float# x position of rectangle
-        self.y = None  #float# y position of rectangle
         self.width = None  #float# Width of rectangle
         self.height = None  #float# Height of rectangle
 
         # Needed for Circle
         self.cx = None  #float# x position of round shape
-        self.cy = None  #float# x position of round shape
+        self.cy = None  #float# y position of round shape
         self.r = None  #float# Radius of circle
 
         # Needed for Ellipse
@@ -228,6 +227,11 @@ class Shape():
         if self.shapeName == "path":
             if self.d != "":
                 validObject = True
+        if self.shapeName == "text":
+            if self.x != None \
+                and self.y != None \
+                and self.text != None:
+                    validObject = True
         
         return validObject
 
@@ -238,15 +242,21 @@ class PointsListObj():
     """Constructor created blank list to be added to"""
     def __init__(self):
         self.pointsList = []
+        self.rasterArray = []
+        self.curShape = []
 
     """Adds points to list"""
     def addPoint(self, sel, xPos=0, yPos=0):
         if sel == "point":
             self.pointsList.append(xPos)
             self.pointsList.append(yPos)
+            self.curShape.append(xPos)
+            self.curShape.append(yPos)
         elif sel == "up" or sel == "down":
             self.pointsList.append(sel)
             self.pointsList.append(sel)
+            self.curShape.append(sel)
+            self.curShape.append(sel)
         else:
             printe("addPoint error, \"" + str(sel) + "\" not valid selection")
             raise TypeError("addPoint error, \"" + str(sel) + "\" not valid selection")
@@ -264,5 +274,45 @@ class PointsListObj():
     def addPlo(self, plo):
         for item in plo.pointsList:
             self.pointsList.append(item)
+            self.curShape.append(item)
+    
+    """Creates new shape to be rastered"""
+    def newShape(self):
+        curShape = []
+
+    """Rasters shape onto array"""
+    def raster(self):
+        maxPoints = self.getMaxPoints(self.curShape)
+        # Adjust for origin not being at 00
+        xOffset = -maxPoints[2]
+        yOffset = -maxPoints[3]
+
+        rasterArray = []
+        for i in range(int(maxPoints[0]-maxPoints[2])+1):
+            rasterArray.append([])
+            for j in range(int(maxPoints[1]-maxPoints[3])+1):
+                rasterArray[i].append(0)
+        
+        printd(rasterArray)
+    
+    def getMaxPoints(self, pointsList):
+        maxXPoint = 0
+        maxYPoint = 0
+        minXPoint = 0
+        minYPoint = 0
+        i = 0
+        while i < len(pointsList) - 2:
+            if pointsList[i] != "up" and pointsList[i] != "down":
+                if pointsList[i] > maxXPoint:
+                    maxXPoint = pointsList[i]
+                if pointsList[i+1] > maxYPoint:
+                    maxYPoint = pointsList[i+1]
+                if pointsList[i] < minXPoint:
+                    minXPoint = pointsList[i]
+                if pointsList[i+1] < minYPoint:
+                    minYPoint = pointsList[i+1]
+            i += 2
+        
+        return maxXPoint, maxYPoint, minXPoint, minYPoint        
 
             

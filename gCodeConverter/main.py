@@ -26,12 +26,12 @@ shapeStrList = splitStrip(fileText)
 shapeObjList = objCreate(shapeStrList)
 
 # Parse objects into points
-pointsList = parseObjects(shapeObjList)
+plo = parseObjects(shapeObjList)
 
 # Point reduction
-maxPoints = pointReduction(pointsList)
+plo = pointReduction(plo)
 
 # Turtle output
-IO.drawPointsTurtle(pointsList, maxPoints)
+IO.drawPointsTurtle(plo)
 
 input()  # delay to keep drawing open

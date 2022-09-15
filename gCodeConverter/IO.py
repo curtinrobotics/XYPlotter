@@ -48,7 +48,8 @@ def readFileData(file):
     return fileText
 
 """Output points to screen with turtle"""
-def drawPointsTurtle(pointsList, maxPoints):
+def drawPointsTurtle(plo):
+    maxPoints = plo.getMaxPoints(plo.pointsList)
     # Turtle settings for screen
     screen = turtle.Screen()
     canvasWidth = maxPoints[0]*constants.IMAGE_SCALING
@@ -61,10 +62,10 @@ def drawPointsTurtle(pointsList, maxPoints):
     t.left(90)
     
     # Drawing of points
-    for i in range(int(len(pointsList)/2)):
-        if pointsList[i*2] == "up":
+    for i in range(int(len(plo.pointsList)/2)):
+        if plo.pointsList[i*2] == "up":
             t.penup()
-        elif pointsList[i*2] == "down":
+        elif plo.pointsList[i*2] == "down":
             t.pendown()
         else:
-            t.setpos(pointsList[i*2]*constants.IMAGE_SCALING-canvasWidth/2, -pointsList[i*2+1]*constants.IMAGE_SCALING+canvasHeight/2)
+            t.setpos(plo.pointsList[i*2]*constants.IMAGE_SCALING-canvasWidth/2, -plo.pointsList[i*2+1]*constants.IMAGE_SCALING+canvasHeight/2)

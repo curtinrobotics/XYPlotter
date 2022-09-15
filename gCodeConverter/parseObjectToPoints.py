@@ -6,6 +6,7 @@ parseObjectToPoints.py - parse object data into points list
 import math
 from classes import PointsListObj
 from IO import printe, printw, printd, printp
+from constants import CURVE_SAMPLE_POINTS, ROUND_DECIMAL_POINTS
 
 """Create Line"""
 def makeLine(plo, i):
@@ -51,24 +52,26 @@ def makeRect(plo, i):
         i.rx = i.width/2
     if i.ry > i.height/2:
         i.ry = i.height/2
+    plo.newShape()
     plo.addPoint("up")
     plo.addPoint("point", i.x+i.rx, i.y)
     plo.addPoint("down")
     if i.rx+i.ry != 0:
         plo.addPoint("point", i.x+i.width-i.rx, i.y)
-        plo.draw_arc(i.x+i.width-i.rx, i.y+i.ry, i.rx, i.ry, -90, 90, 25)
+        plo.draw_arc(i.x+i.width-i.rx, i.y+i.ry, i.rx, i.ry, -90, 90, int(CURVE_SAMPLE_POINTS/4))
         plo.addPoint("point", i.x+i.width, i.y+i.height-i.ry)
-        plo.draw_arc(i.x+i.width-i.rx, i.y+i.height-i.ry, i.rx, i.ry, 0, 90, 25)
+        plo.draw_arc(i.x+i.width-i.rx, i.y+i.height-i.ry, i.rx, i.ry, 0, 90, int(CURVE_SAMPLE_POINTS/4))
         plo.addPoint("point", i.x+i.rx, i.y+i.height)
-        plo.draw_arc(i.x+i.rx, i.y+i.height-i.ry, i.rx, i.ry, 90, 90, 25)
+        plo.draw_arc(i.x+i.rx, i.y+i.height-i.ry, i.rx, i.ry, 90, 90, int(CURVE_SAMPLE_POINTS/4))
         plo.addPoint("point", i.x, i.y+i.ry)
-        plo.draw_arc(i.x+i.rx, i.y+i.ry, i.rx, i.ry, -180, 90, 25)
+        plo.draw_arc(i.x+i.rx, i.y+i.ry, i.rx, i.ry, -180, 90, int(CURVE_SAMPLE_POINTS/4))
     else:
         plo.addPoint("point", i.x+i.width, i.y)
         plo.addPoint("point", i.x+i.width, i.y+i.height)
         plo.addPoint("point", i.x, i.y+i.height)
         plo.addPoint("point", i.x, i.y)
     plo.addPoint("up")
+    plo.raster()
 
 """Create Ellipse and Circles"""
 def makeEllipse(plo, i):
@@ -78,7 +81,7 @@ def makeEllipse(plo, i):
     plo.addPoint("up")
     plo.addPoint("point", i.cx+i.rx, i.cy)
     plo.addPoint("down")
-    plo.draw_arc(i.cx, i.cy, i.rx, i.ry, 0, 360, 100)
+    plo.draw_arc(i.cx, i.cy, i.rx, i.ry, 0, 360, CURVE_SAMPLE_POINTS)
     plo.addPoint("up")
 
 """Create Paths"""
@@ -225,15 +228,15 @@ def makePath(plo, i):
                 plo.addPoint("point", iterCommandPoints[0], iterCommandPoints[1])
             elif commandType.upper() in ["C", "S"]:
                 printd("Curve/Smooth Curve")
-                for i in range(0, 101, 1):
-                    i /= 100
+                for i in range(0, CURVE_SAMPLE_POINTS+1, 1):
+                    i /= CURVE_SAMPLE_POINTS
                     xPoint = (((1-i)**3) * iterCommandPoints[0]) + (3*i*((1-i)**2) * (iterCommandPoints[2])) + (3*(i**2) * (1-i) * (iterCommandPoints[4])) + (i**3 * (iterCommandPoints[6]))
                     yPoint = (((1-i)**3) * iterCommandPoints[1]) + (3*i*((1-i)**2) * (iterCommandPoints[3])) + (3*(i**2) * (1-i) * (iterCommandPoints[5])) + (i**3 * (iterCommandPoints[7]))
                     plo.addPoint("point", xPoint, yPoint)
             elif commandType.upper() in ["Q", "T"]:
                 printd("Quadratic Curve/Smooth Quadratic curve")
-                for i in range(0, 101, 1):
-                    i /= 100
+                for i in range(0, CURVE_SAMPLE_POINTS+1, 1):
+                    i /= CURVE_SAMPLE_POINTS
                     xPoint = (((1-i)**2) * iterCommandPoints[0]) + (2*i*(1-i) * (iterCommandPoints[2])) + (i**2 * (iterCommandPoints[4]))
                     yPoint = (((1-i)**2) * iterCommandPoints[1]) + (2*i*(1-i) * (iterCommandPoints[3])) + (i**2 * (iterCommandPoints[5]))
                     plo.addPoint("point", xPoint, yPoint)          
@@ -244,6 +247,10 @@ def makePath(plo, i):
                 plo.addPoint("point", startPoint[0], startPoint[1])
 
     printd()
+
+"""Draw Text"""
+def makeText(plo, i):
+    printd("Drawing text \"" + i.text + "\"")
 
 """Transform points in shape with transform attribute"""
 def transformShape(plo, i):
@@ -343,7 +350,7 @@ def parseObjects(shapeObjList):
     # New list object to add points to
     masterPlo = PointsListObj()
 
-    for i in shapeObjList:
+    for i in reversed(shapeObjList):
         printd("\nWorking on shape: " + str(i.shapeName))
         plo = PointsListObj()
         if i.checkShape():
@@ -357,6 +364,8 @@ def parseObjects(shapeObjList):
                 makeEllipse(plo, i)
             if i.shapeName == "path":
                 makePath(plo, i)
+            if i.shapeName == "text":
+                makeText(plo, i)
         else:
             printe("Object invald, not drawing object: " + str(i.shapeName))
         
@@ -365,43 +374,29 @@ def parseObjects(shapeObjList):
         
         masterPlo.addPlo(plo)
     
-    return masterPlo.pointsList
+    return masterPlo
 
 
 """Reduces unnecessary resolution from points list and finds max/min xy points"""
-def pointReduction(pointsList):
+def pointReduction(plo):
     # First loop: rounding
-    for index, item in enumerate(pointsList):
+    for index, item in enumerate(plo.pointsList):
         if item != "up" and item != "down":
-            pointsList[index] = round(item, 1)
+            plo.pointsList[index] = round(item, ROUND_DECIMAL_POINTS)
 
-    # Second loop: removing duplicate point; finding max X and Y points
-    maxXPoint = 0
-    maxYPoint = 0
-    minXPoint = 0
-    minYPoint = 0
+    # Second loop: removing duplicate point
     i = 0
-    while i < len(pointsList) - 2:
-        if pointsList[i] != "up" and pointsList[i] != "down":
-            if pointsList[i] > maxXPoint:
-                maxXPoint = pointsList[i]
-            if pointsList[i+1] > maxYPoint:
-                maxYPoint = pointsList[i+1]
-            if pointsList[i] < minXPoint:
-                minXPoint = pointsList[i]
-            if pointsList[i+1] < minYPoint:
-                minYPoint = pointsList[i+1]
-
-            if pointsList[i] == pointsList[i+2] and pointsList[i+1] == pointsList[i+3]:
-                del pointsList[i:i+2]
+    while i < len(plo.pointsList) - 2:
+        if plo.pointsList[i] != "up" and plo.pointsList[i] != "down":
+            if plo.pointsList[i] == plo.pointsList[i+2] and plo.pointsList[i+1] == plo.pointsList[i+3]:
+                del plo.pointsList[i:i+2]
         i += 2
     
     # Third loop: shifting so all points positive
-    for i in range(0, len(pointsList), 2):
-        if pointsList[i] != "up" and pointsList[i] != "down":
-            pointsList[i] -= minXPoint
-            pointsList[i+1] -= minYPoint
-    maxXPoint -= minXPoint
-    maxYPoint -= minYPoint
+    maxXPoint, maxYPoint, minXPoint, minYPoint = plo.getMaxPoints(plo.pointsList)
+    for i in range(0, len(plo.pointsList), 2):
+        if plo.pointsList[i] != "up" and plo.pointsList[i] != "down":
+            plo.pointsList[i] -= minXPoint
+            plo.pointsList[i+1] -= minYPoint
     
-    return maxXPoint, maxYPoint
+    return plo
