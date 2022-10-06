@@ -14,7 +14,7 @@ FILE = "sgvFiles/rectangleTest.svg"  # Source file for plotting
 
 # Turtle Output
 IMAGE_SCALING = 1  # Scale image to fit screen (>0)
-DRAWING_DELAY = 0  # Delay between drawing points (0-30)
+DRAWING_DELAY = 10  # Delay between drawing points (0-30)
 
 # Points Resolution
 CURVE_SAMPLE_POINTS = 100  # Number of sample points on curves

@@ -7,6 +7,8 @@ NOTE: Due to python not accepting hyphens "-" as valid variables,
 """
 # Libraries
 import math
+from turtle import pendown
+import constants
 from IO import printe, printw, printd, printp
 
 """Shapes with attrubutes from svg files"""
@@ -287,13 +289,59 @@ class PointsListObj():
         xOffset = -maxPoints[2]
         yOffset = -maxPoints[3]
 
+        # Create blank array
         rasterArray = []
         for i in range(int(maxPoints[0]-maxPoints[2])+1):
             rasterArray.append([])
             for j in range(int(maxPoints[1]-maxPoints[3])+1):
                 rasterArray[i].append(0)
         
-        printd(rasterArray)
+        # Add points to array
+        printd(self.pointsList)
+        curX = 0
+        curY = 0
+        nextX = 0
+        nextY = 0
+        penDown = False
+        for i in range(2, len(self.pointsList), 2):
+            cur = self.pointsList[i]
+            printd(cur)
+            if( cur == "up" ):
+                penDown = False
+                if( i+2 < len(self.pointsList) ):
+                    curX = self.pointsList[i+2]
+                    curY = self.pointsList[i+3]
+                    nextX = self.pointsList[i+2]
+                    nextY = self.pointsList[i+3]
+            elif( cur == "down" ):
+                penDown = True
+                if( i+2 < len(self.pointsList) ):
+                    nextX = self.pointsList[i+2]
+                    nextY = self.pointsList[i+3]
+            else:
+                nextX = self.pointsList[i+0]
+                nextY = self.pointsList[i+1]
+
+            if( pendown ):
+                curX = float(curX)
+                curY = float(curY)
+                nextX = float(nextX)
+                nextY = float(nextY)
+                printd(str(curX) + "," + str(curY))
+                xStep = (nextX - curX)/constants.CURVE_SAMPLE_POINTS
+                yStep = (nextY - curY)/constants.CURVE_SAMPLE_POINTS
+                for step in range(0, constants.CURVE_SAMPLE_POINTS+1, 1):
+                    curX += xStep
+                    curY += yStep
+                    printd(str(curX) + "," + str(curY))
+                    # add points to array
+
+            curX = nextX
+            curY = nextY
+
+
+        for row in rasterArray:
+            printd(row)
     
     def getMaxPoints(self, pointsList):
         maxXPoint = 0
