@@ -12,7 +12,7 @@ WARNING_OUTPUT = True    # For partially implemented features
 DEBUG_OUTPUT = True      # For general debugging
 
 # File IO
-FILE = "../sgvFiles/rectangleTest.svg"  # Source file for plotting
+FILE = "sgvFiles/freesample.svg"  # Source file for plotting
 
 # Turtle Output
 IMAGE_SCALING = 1  # Scale image to fit screen (>0)

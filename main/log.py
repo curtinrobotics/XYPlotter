@@ -43,4 +43,5 @@ class DebugLog():
 
 """Log data variable"""
 def createLog():
+    global log
     log = DebugLog()
