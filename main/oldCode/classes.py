@@ -18,7 +18,7 @@ class Shape():
     def __init__(self, shapeName):
         self.shapeName = shapeName
         # Hierarchy of shapes:
-        # General
+        # Generalz
         #   Line (line)
         #   Polyline (polyline)
         #   Polygon (polygon)
