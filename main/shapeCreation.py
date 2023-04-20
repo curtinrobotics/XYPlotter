@@ -3,18 +3,40 @@ shapeCreation.py
 Extracts shape parameters from SVG file and fills shape objects from shape.py.
 """
 
-from inputOutput import printd
+from inputOutput import printd, printw, printe
+
+# Constants used in file
+# Types of elements
+SINGLE = "single"
+OPENING = "opening"
+CLOSING = "closing"
+VERSION = "version"
+DOCTYPE = "doctype"
+COMMENT = "comment"
+CONTENT = "content"
+
+# List of Shapes that can be processed
+SHAPE_LIST = ["line", "polyline", "polygon", "rect", "circle", "ellipse", "path"]
+# List of Shapes that are never to be processed
+NEVER_SHAPE_LIST = []
+# List of Containers that are never to be processed
+NEVER_CONTAINER_LIST = []
+
 
 """Main function for shape creation"""
 def shapeCreation(svgData):
-    """New format"""
     # Read file char by char, extracting elements
     elementList = findElements(svgData)
-    for item in elementList:
-        printd(item)
 
     # Extract element type and attributes from elements
     detailedElementList = extractElementDetails(elementList)
+    for item in detailedElementList:
+        printd(item)
+
+    # Create shape objects
+    shapeObjList = createShapeList(detailedElementList)
+
+    return shapeObjList
 
     """
     Old formant
@@ -26,13 +48,9 @@ def shapeCreation(svgData):
 
 
 """Finds and generates list of XML elements"""
+"""Returns list of tuples of element types and element data"""
 def findElements(svgData):
     elementList = []
-    curElement = ""
-    prevChar = ''
-    elementType = "opening"
-    newElement = True
-    newElementMore = False
     """
     Types of elements
     single  - stand alone                   <  ... />
@@ -41,49 +59,157 @@ def findElements(svgData):
     version - XML version number            <? ... ?>
     doctype - SVG document type             <! ...  >
     comment - comment                       <!-- ... -->
+    content - not in element
     """
+    curElement = ""
     for char in svgData:
-        if char == '<':  # New element
+        if char == '<':
+            # Content type (not in element)
+            curElement = curElement.strip()
+            if curElement != "":
+                elementList.append((CONTENT, curElement))
             curElement = ""
-            elementType = "opening"
-            newElement = True
-            newElementMore = False
-        elif char == '>':  # Close element, append onto list
-            if prevChar == '/':
-                elementType = "single"
-                curElement = curElement[:-1]
-            if prevChar == '?' and elementType == "version":
-                curElement = curElement[:-1]
-            if prevChar == '-' and elementType == "comment":
-                curElement = curElement[1:-2]
-            elementList.append((elementType, curElement))
-        elif char == '/' and newElement:  # Closing type element
-            elementType = "closing"
-        elif char == '?' and newElement:  # Version type element
-            elementType = "version"
-        elif char == '!' and newElement:  # Doctype or Comment type element
-            newElementMore = True
-            newElement = False
-        elif newElementMore:  # Doctype of Comment type element
-            newElementMore = False
-            if char == '-':
-                elementType = "comment"
-            else:
-                elementType = "doctype"
-                curElement += char
+        elif char == '>':
+            if curElement != "":
+                if curElement[-1] == "/":
+                    elementType = SINGLE
+                    curElement = curElement[:-1]
+                elif curElement[0] == "/":
+                    elementType = OPENING
+                    curElement = curElement[1:]
+                elif curElement[0] == "?" and curElement[-1] == "?":
+                    elementType = VERSION
+                    curElement = curElement[1:-1]
+                elif curElement[0] == "!":
+                    elementType = DOCTYPE
+                    if len(curElement) >= 5:
+                        if curElement[:3] == "!--" and curElement[-2:] == "--":
+                            elementType = COMMENT
+                            curElement = curElement[3:-2]
+                    if elementType == DOCTYPE:
+                        curElement = curElement[1:]
+                else:
+                    elementType = OPENING
+                elementList.append((elementType, curElement))
+            curElement = ""
         else:
             curElement += char
-            newElement = False
-        prevChar = char
 
     return elementList
 
+
 """Extracts SVG element types and attributes"""
+"""Returns list of tuples of element types, element name, element attribute dictionary"""
 def extractElementDetails(elementList):
     detailedElementList = []
+    for item in elementList:
+        elementType = item[0]
+        elementName = item[1].split()[0]
+        elementData = item[1][len(elementName):]
+        elementDict = {}
+
+        # Get element attributes (not all elements have attributes)
+        if elementType in [DOCTYPE, COMMENT, CONTENT]:
+            elementName = item[1]
+        else:
+            inQuote = False
+            quoteType = ""
+            curData = ""
+            curAttName = ""
+            # attribute name = "data"
+            for char in elementData:
+                if not inQuote and (char == '"' or char == "'"):  # New data
+                    inQuote = True
+                    quoteType = char
+                elif inQuote and char == quoteType:  # End data, append attribute
+                    inQuote = False
+                    quoteType = ""
+                    elementDict.update({curAttName: curData})
+                    curData = ""
+                    curAttName = ""
+                elif inQuote:  # Add data
+                    curData += char
+                elif not (char.isspace() or char == '='):  # Add attribute name
+                    curAttName += char
+
+        detailedElementList.append((elementType, elementName, elementDict))
 
     return detailedElementList
 
+
+"""Creates shape objects from element list"""
+"""Returns list of shape objects (see shape.py)"""
+def createShapeList(detailedElementList):
+    shapeObjList = []
+    containerList = []
+    for element in detailedElementList:
+        if element[0] == SINGLE:
+            if element[1] in SHAPE_LIST:
+                printd("Shape \"" + str(element[1]) + "\" being processed")
+                shapeObjList.append(createShape(element[1], element[2], containerList))
+            elif element[1] in NEVER_SHAPE_LIST:
+                printw("Shape \"" + str(element[1]) + "\" to not be processed")
+            else:
+                printe("Shape \"" + str(element[1]) + "\" type not found")
+        elif element[0] == OPENING:
+            if element[1] == "g":
+                printd("Opening Container \"" + str(element[1]) + "\" being processed")
+                containerList.append(element[3])
+            elif element[1] in NEVER_CONTAINER_LIST:
+                printw("Opening Container \"" + str(element[1]) + "\" to not be processed")
+            else:
+                printe("Opening Container \"" + str(element[1]) + "\" type not found")
+        elif element[0] == CLOSING:
+            if element[1] == "g":
+                printd("Closing Container \"" + str(element[1]) + "\" being processed")
+                containerList.pop()
+            elif element[1] in NEVER_CONTAINER_LIST:
+                printw("Closing Container \"" + str(element[1]) + "\" to not be processed")
+            else:
+                printe("Closing Container \"" + str(element[1]) + "\" type not found")
+        elif element[0] in [VERSION, DOCTYPE, COMMENT]:
+            printd("SVG DATA: " + str(element[1]))
+        elif element[0] == CONTENT:
+            printw("Element Content found, data not in element")
+        else:
+            printe("Element \"" + str(element[0]) + "\" type not found")
+
+    return shapeObjList
+
+
+"""Creates shape object from shape attribute data"""
+def createShape(shapeName, shapeData, groupContainerData):
+    newShape = None
+    if shapeName == "line":
+        pass
+    elif shapeName == "polyline":
+        pass
+    elif shapeName == "polygon":
+        pass
+    elif shapeName == "rect":
+        pass
+    elif shapeName == "circle":
+        pass
+    elif shapeName == "ellipse":
+        pass
+    elif shapeName == "path":
+        pass
+    else:
+        printe("Shape \"" + str(shapeName) + "\" type not found")
+    # case statement of shapeName: create shape obj
+    # append g container data from outermost to innermost
+    #   inner containers override outer containers
+    # append shape data
+    #    shape data overrides g containers
+
+    return newShape
+
+
+"""Creates list of attributes from g container"""
+def createGroupAttributeList(groupContainerData):
+    attributeList = []
+    # extract attributes from g container, appending to list
+    return attributeList
 
 """!!!OLD CODE!!
 
@@ -109,6 +235,7 @@ def getObjData(objData, objName):
         objDataClean = objDataClean[:-1]
     # Make list into dict
     objDataDict = {}
+    
     printd(objDataClean)
     for index, item in enumerate(objDataClean):
         if index % 2 == 0:

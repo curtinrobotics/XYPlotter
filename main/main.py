@@ -10,6 +10,7 @@ import constants
 import log
 import inputOutput
 import shapeCreation
+import pointCreation
 
 # Setup debug log
 log.createLog()
@@ -19,10 +20,9 @@ svgData = inputOutput.readFileData(constants.FILE)
 
 shapeList = shapeCreation.shapeCreation(svgData)
 
-"""
-Point Creation
 pointList = pointCreation.pointCreation(shapeList)
 
+"""
 Plot Points
 turtlePlot.turtlePlot(pointList)
 
