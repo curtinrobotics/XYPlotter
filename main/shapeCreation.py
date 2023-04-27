@@ -3,6 +3,7 @@ shapeCreation.py
 Extracts shape parameters from SVG file and fills shape objects from shape.py.
 """
 
+import shape
 from inputOutput import printd, printw, printe
 
 # Constants used in file
@@ -22,7 +23,6 @@ NEVER_SHAPE_LIST = []
 # List of Containers that are never to be processed
 NEVER_CONTAINER_LIST = []
 
-
 """Main function for shape creation"""
 def shapeCreation(svgData):
     # Read file char by char, extracting elements
@@ -37,14 +37,6 @@ def shapeCreation(svgData):
     shapeObjList = createShapeList(detailedElementList)
 
     return shapeObjList
-
-    """
-    Old formant
-    splitStrip(fileText)
-    objCreate(shapeStrList)
-        getObjData(objData, objName)
-        createShape(shapeName, shapeDataDict, gData)
-    """
 
 
 """Finds and generates list of XML elements"""
@@ -75,7 +67,7 @@ def findElements(svgData):
                     elementType = SINGLE
                     curElement = curElement[:-1]
                 elif curElement[0] == "/":
-                    elementType = OPENING
+                    elementType = CLOSING
                     curElement = curElement[1:]
                 elif curElement[0] == "?" and curElement[-1] == "?":
                     elementType = VERSION
@@ -94,7 +86,6 @@ def findElements(svgData):
             curElement = ""
         else:
             curElement += char
-
     return elementList
 
 
@@ -142,38 +133,42 @@ def extractElementDetails(elementList):
 def createShapeList(detailedElementList):
     shapeObjList = []
     containerList = []
+    TYPE = 0
+    NAME = 1
+    DATA = 2
     for element in detailedElementList:
-        if element[0] == SINGLE:
-            if element[1] in SHAPE_LIST:
-                printd("Shape \"" + str(element[1]) + "\" being processed")
-                shapeObjList.append(createShape(element[1], element[2], containerList))
-            elif element[1] in NEVER_SHAPE_LIST:
-                printw("Shape \"" + str(element[1]) + "\" to not be processed")
+        if element[TYPE] == SINGLE:
+            if element[NAME] in SHAPE_LIST:
+                printd("Shape \"" + str(element[NAME]) + "\" being processed")
+                newShape = createShape(element[NAME], element[DATA], containerList)
+                if newShape is not None:
+                    shapeObjList.append(newShape)
+            elif element[NAME] in NEVER_SHAPE_LIST:
+                printw("Shape \"" + str(element[NAME]) + "\" to not be processed")
             else:
-                printe("Shape \"" + str(element[1]) + "\" type not found")
-        elif element[0] == OPENING:
-            if element[1] == "g":
-                printd("Opening Container \"" + str(element[1]) + "\" being processed")
-                containerList.append(element[3])
-            elif element[1] in NEVER_CONTAINER_LIST:
-                printw("Opening Container \"" + str(element[1]) + "\" to not be processed")
+                printe("Shape \"" + str(element[NAME]) + "\" type not found")
+        elif element[TYPE] == OPENING:
+            if element[NAME] == "g":
+                printd("Opening Container \"" + str(element[NAME]) + "\" being processed")
+                containerList.append(element[DATA])
+            elif element[NAME] in NEVER_CONTAINER_LIST:
+                printw("Opening Container \"" + str(element[NAME]) + "\" to not be processed")
             else:
-                printe("Opening Container \"" + str(element[1]) + "\" type not found")
-        elif element[0] == CLOSING:
-            if element[1] == "g":
-                printd("Closing Container \"" + str(element[1]) + "\" being processed")
+                printe("Opening Container \"" + str(element[NAME]) + "\" type not found")
+        elif element[TYPE] == CLOSING:
+            if element[NAME] == "g":
+                printd("Closing Container \"" + str(element[NAME]) + "\" being processed")
                 containerList.pop()
-            elif element[1] in NEVER_CONTAINER_LIST:
-                printw("Closing Container \"" + str(element[1]) + "\" to not be processed")
+            elif element[NAME] in NEVER_CONTAINER_LIST:
+                printw("Closing Container \"" + str(element[NAME]) + "\" to not be processed")
             else:
-                printe("Closing Container \"" + str(element[1]) + "\" type not found")
-        elif element[0] in [VERSION, DOCTYPE, COMMENT]:
-            printd("SVG DATA: " + str(element[1]))
-        elif element[0] == CONTENT:
+                printe("Closing Container \"" + str(element[NAME]) + "\" type not found")
+        elif element[TYPE] in [VERSION, DOCTYPE, COMMENT]:
+            printd("SVG DATA: " + str(element[NAME]))
+        elif element[TYPE] == CONTENT:
             printw("Element Content found, data not in element")
         else:
             printe("Element \"" + str(element[0]) + "\" type not found")
-
     return shapeObjList
 
 
@@ -181,28 +176,45 @@ def createShapeList(detailedElementList):
 def createShape(shapeName, shapeData, groupContainerData):
     newShape = None
     if shapeName == "line":
-        pass
+        newShape = shape.Line()
     elif shapeName == "polyline":
-        pass
+        newShape = shape.Polyline()
     elif shapeName == "polygon":
-        pass
+        newShape = shape.Polygon()
     elif shapeName == "rect":
-        pass
+        newShape = shape.Rectangle()
     elif shapeName == "circle":
-        pass
+        newShape = shape.Circle()
     elif shapeName == "ellipse":
-        pass
+        newShape = shape.Ellipse()
     elif shapeName == "path":
-        pass
+        newShape = shape.Path()
     else:
         printe("Shape \"" + str(shapeName) + "\" type not found")
-    # case statement of shapeName: create shape obj
-    # append g container data from outermost to innermost
-    #   inner containers override outer containers
-    # append shape data
-    #    shape data overrides g containers
 
+    if newShape is not None:
+        for container in groupContainerData:
+            for key, value in container.items():
+                state = newShape.add(key, value)
+                outputCreateShapeError(state, shapeName, key)
+        for key, value in shapeData.items():
+            state = newShape.add(key, value)
+            outputCreateShapeError(state, shapeName, key)
     return newShape
+
+
+"""Outputs error text for createShape function"""
+def outputCreateShapeError(state, shapeName, attribute):
+    if state == "warning":
+        printw("Attribute \"" + str(attribute) + "\" not implemented for \"" + shapeName + "\"")
+    elif state == "not found":
+        printe("Attribute \"" + str(attribute) + "\" not found for \"" + shapeName + "\"")
+    elif state == "error":
+        printe("Attribute \"" + str(attribute) + "\" not invalid for \"" + shapeName + "\"")
+    elif state != "success":
+        printw("Attribute \"" + str(attribute) + "\" had internal error for \"" + shapeName + "\"")
+    else:
+        printd("Attribute \"" + str(attribute) + "\" added to \"" + shapeName + "\"")
 
 
 """Creates list of attributes from g container"""
@@ -210,111 +222,3 @@ def createGroupAttributeList(groupContainerData):
     attributeList = []
     # extract attributes from g container, appending to list
     return attributeList
-
-"""!!!OLD CODE!!
-
-# Gets data from file string and retruns dict
-def getObjData(objData, objName):
-    # Make object data into list
-    objData = objData.split("\"")
-    objDataClean = []
-    for item in objData:
-        item = item.strip()
-        item = item.strip("=")
-        item = item.strip()
-        if len(objDataClean) == 0:
-            item = item.split()
-            item = item[1].strip()
-        objDataClean.append(item)
-    if objName == "text":
-        textData = objDataClean[-1].strip(">")
-        objDataClean = objDataClean[:-1]
-        objDataClean.append("text")
-        objDataClean.append(textData)
-    else:
-        objDataClean = objDataClean[:-1]
-    # Make list into dict
-    objDataDict = {}
-    
-    printd(objDataClean)
-    for index, item in enumerate(objDataClean):
-        if index % 2 == 0:
-            objDataDict[item] = objDataClean[index + 1]
-    # Removes ID tag from data
-    try:
-        del objDataDict["id"]
-    except KeyError as err:
-        if str(err) != "'id'":
-            raise KeyError(str(err))
-    return objDataDict
-
-
-# Creates shape objects from dict
-def createShape(shapeName, shapeDataDict, gData):
-    # Note: some objects may not exist
-    newShape = Shape(shapeName)
-    for gDict in gData:
-        if (gDict != None):
-            for item in gDict:
-                itemAdded = newShape.add(item, gDict[item])
-                if itemAdded == "success":
-                    printd("Successfully added\t" + str(item) + "\tto " + str(shapeName))
-                elif itemAdded == "warning":
-                    printw("Warning: added\t" + str(item) + "\tto " + str(shapeName) + " but not implemented")
-                else:
-                    printe("Could not find\t\t" + str(item) + "\tin " + str(shapeName))
-    for item in shapeDataDict:
-        itemAdded = newShape.add(item, shapeDataDict[item])
-        if itemAdded == "success":
-            printd("Successfully added\t" + str(item) + "\tto " + str(shapeName))
-        elif itemAdded == "warning":
-            printw("Warning: added\t" + str(item) + "\tto " + str(shapeName) + " but not implemented")
-        else:
-            printe("Could not find\t\t" + str(item) + "\tin " + str(shapeName))
-    return newShape
-
-
-# Split file string into shape list
-def splitStrip(fileText):
-    fileList = fileText.split("<")
-    fileListStrip = []
-    for item in fileList:
-        item = item.strip()
-        fileListStrip.append(item)
-    return fileListStrip
-
-
-# Create objects from shape list
-def objCreate(shapeStrList):
-    shapeObjList = []
-    gData = []
-    for item in shapeStrList:
-        if item != "":
-            objName = item.split()[0]
-            if objName in SHAPE_LIST:
-                # Create shape object
-                printd("\nCreating object: " + objName)
-                objDict = getObjData(item, objName)
-                shapeObj = createShape(objName, objDict, gData)
-                shapeObjList.append(shapeObj)
-            elif objName in FORMAT_SYSTAX:
-                printd(objName + " format")
-            elif objName == "g":
-                # Creates g container
-                printd("\nOpen g container")
-                gData.append(getObjData(item, objName))
-            elif objName == "g>":
-                # Create empty g container
-                printd("\nOpen g empty container")
-                gData.append(None)
-            elif objName == "/g>":
-                # Close g container
-                printd("Close g container")
-                gData.pop()
-            elif "/" in objName:
-                printd("Closing: " + str(objName[1:-1]))
-            else:
-                printe("What dis: " + str(objName))
-
-    return shapeObjList
-"""

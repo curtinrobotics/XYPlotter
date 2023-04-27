@@ -20,7 +20,7 @@ svgData = inputOutput.readFileData(constants.FILE)
 
 shapeList = shapeCreation.shapeCreation(svgData)
 
-pointList = pointCreation.pointCreation(shapeList)
+#pointList = pointCreation.pointCreation(shapeList)
 
 """
 Plot Points
