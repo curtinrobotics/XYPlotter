@@ -11,8 +11,12 @@
             "id": "5d10c1afa9a0540c",
             "type": "leaf",
             "state": {
-              "type": "empty",
-              "state": {}
+              "type": "markdown",
+              "state": {
+                "file": "SVG Documentation.md",
+                "mode": "source",
+                "source": false
+              }
             }
           }
         ]
@@ -81,6 +85,7 @@
             "state": {
               "type": "backlink",
               "state": {
+                "file": "SVG Documentation.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -97,6 +102,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
+                "file": "SVG Documentation.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -118,7 +124,9 @@
             "type": "leaf",
             "state": {
               "type": "outline",
-              "state": {}
+              "state": {
+                "file": "SVG Documentation.md"
+              }
             }
           }
         ]
@@ -139,5 +147,7 @@
     }
   },
   "active": "5d10c1afa9a0540c",
-  "lastOpenFiles": []
+  "lastOpenFiles": [
+    "SVG Documentation.md"
+  ]
 }
