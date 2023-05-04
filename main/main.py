@@ -11,6 +11,9 @@ import log
 import inputOutput
 import shapeCreation
 import pointCreation
+import turtlePlot
+
+print("\n--== SVG Processing Tool v.alpha ==--\n")
 
 # Setup debug log
 log.createLog()
@@ -18,15 +21,14 @@ log.createLog()
 # Import svg file
 svgData = inputOutput.readFileData(constants.FILE)
 
+# Create shapes from file data
 shapeList = shapeCreation.shapeCreation(svgData)
 
-#pointList = pointCreation.pointCreation(shapeList)
+# Create points from shape data
+pointList = pointCreation.pointCreation(shapeList)
 
-"""
-Plot Points
+# Plot Points
 turtlePlot.turtlePlot(pointList)
-
-"""
 
 
 input()  # delay to keep drawing open

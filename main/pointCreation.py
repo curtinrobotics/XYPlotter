@@ -11,12 +11,16 @@ def pointCreation(shapeList):
     pointList = []
     for curShape in shapeList:
         printd("\nWorking on shape: " + str(curShape.name()))
-        shapePointList = curShape.getPoints()
-        shapePointList = curShape.transform(shapePointList)
-        shapePointList = pointReduction(shapePointList)
-        pointList.append(shapePointList)
+        if curShape.checkShape():
+            shapePointList = curShape.getPoints()
+            shapePointList = curShape.transformPoints(shapePointList)
+            shapePointList = pointReduction(shapePointList)
+            pointList.extend(shapePointList)
+            printd(shapePointList)
+        else:
+            printe("Shape " + str(curShape.name()) + " is invalid")
 
-    pointList = pointAdjustment(pointList)
+    pointList = pointAlignment(pointList)
 
     return pointList
 
@@ -37,8 +41,9 @@ def pointReduction(pointList):
 
     return pointList
 
+
 """Adjust points to be aligned with 0,0"""
-def pointAdjustment(pointList):
+def pointAlignment(pointList):
     maxXPoint, maxYPoint, minXPoint, minYPoint = getMaxPoints(pointList)
     for i in range(0, len(pointList), 2):
         curX = pointList[i]
@@ -51,10 +56,10 @@ def pointAdjustment(pointList):
 
 """Gets maximum and minimum points out of a list"""
 def getMaxPoints(pointList):
-    maxXPoint = pointList[0]
-    maxYPoint = pointList[1]
-    minXPoint = pointList[0]
-    minYPoint = pointList[1]
+    maxXPoint = -9999
+    maxYPoint = -9999
+    minXPoint = 9999
+    minYPoint = 9999
 
     for i in range(0, len(pointList), 2):
         curX = pointList[i]

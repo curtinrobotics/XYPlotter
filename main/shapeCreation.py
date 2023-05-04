@@ -30,8 +30,6 @@ def shapeCreation(svgData):
 
     # Extract element type and attributes from elements
     detailedElementList = extractElementDetails(elementList)
-    for item in detailedElementList:
-        printd(item)
 
     # Create shape objects
     shapeObjList = createShapeList(detailedElementList)
@@ -205,16 +203,16 @@ def createShape(shapeName, shapeData, groupContainerData):
 
 """Outputs error text for createShape function"""
 def outputCreateShapeError(state, shapeName, attribute):
-    if state == "warning":
+    if state == "success":
+        printd("Attribute \"" + str(attribute) + "\" added to \"" + shapeName + "\"")
+    elif state == "warning":
         printw("Attribute \"" + str(attribute) + "\" not implemented for \"" + shapeName + "\"")
     elif state == "not found":
         printe("Attribute \"" + str(attribute) + "\" not found for \"" + shapeName + "\"")
     elif state == "error":
         printe("Attribute \"" + str(attribute) + "\" not invalid for \"" + shapeName + "\"")
-    elif state != "success":
-        printw("Attribute \"" + str(attribute) + "\" had internal error for \"" + shapeName + "\"")
     else:
-        printd("Attribute \"" + str(attribute) + "\" added to \"" + shapeName + "\"")
+        printe("Attribute \"" + str(attribute) + "\" had internal error for \"" + shapeName + "\"")
 
 
 """Creates list of attributes from g container"""
