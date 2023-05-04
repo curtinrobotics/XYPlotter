@@ -6,11 +6,12 @@ Scalable Vector Graphics (SVG) codes 2D images using Extensible Markup Language 
 
 We want to use SVG because it enables us to code in scalable and resizable pictures (ie vector images).
 
-### Elements of SVG we are implementing 
+### Basic shapes (elements) of SVG we are implementing 
 We will list the elements below in the form
-* element: 
-	* attribute1 (explanation1) 
-	* attribute2 (explanation2)
+
+* basic shape: 
+	* parameter1 (explanation1) 
+	* parameter2 (explanation2)
 	* etc
 * text: 
 	* x (x position measured pixels from left, positive x is directed right)
@@ -22,8 +23,34 @@ We will list the elements below in the form
 	* stroke-linejoin (how lines are joined, eg: mitre, bevel, round)
 
 
-* path:
-	* d ()
+* path:  ``` <path> ```
+	* d (defines a path to be drawn. contains list of commands and parameters used by the commands) string of series commands to be drawn[^1] 
+		* MoveTo (M,m) [^2] 
+			* M (parameters: x, y)
+				* Moves current point to this absolute coordinate.
+			*  m (parameters: *dx*, *dy*)
+				* moves current point *dx* right and *dy* down from last known position
+		[^2]: Always possible to give negative values 
+			negative angles become anticlockwise
+			absolute negative x and y values are negative coordinates
+			realtive negative x and y values move left and up respectively
+		
+		* LineTo (L, l, H, h, V, v)
+		| Command | Parameters | Description |
+		| --- | --- | --- |
+		| L | (x, y)+ | draws a line from current position to absolute point (x, y) |
+		| l | (```dx```, ```dy```)+ | draws a line from current position to a point shifted ```dx``` right and ```dy``` down |
+		
+		* Cubic Bézier Curve (C, c, S, s)
+		* Quadratic Bézier Curve (Q, q, T, t)
+		* Elliptical Bézier Curve (A, a)
+		* ClosePath (Z, z)
+		[^1]: Note all commands are case-sensitive
+		
+	* creates lines, curves, arcs 
+	* ```<polyline>``` is an inferior version and doesn't scale up well (uses lots of small lines)
+	* 
+
 ## Examples
 
 SVG lines of code start with

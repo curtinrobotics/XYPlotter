@@ -4,11 +4,23 @@
     "type": "split",
     "children": [
       {
-        "id": "551a47f0354a7e5b",
+        "id": "c2fbaeb0da7e482a",
         "type": "tabs",
         "children": [
           {
-            "id": "5d10c1afa9a0540c",
+            "id": "da84ebbd9201e823",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Classes.md",
+                "mode": "source",
+                "source": false
+              }
+            }
+          },
+          {
+            "id": "fba78822c2263e27",
             "type": "leaf",
             "state": {
               "type": "markdown",
@@ -64,12 +76,21 @@
               "type": "starred",
               "state": {}
             }
+          },
+          {
+            "id": "58e94c8f8814edcc",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {}
+            }
           }
         ]
       }
     ],
     "direction": "horizontal",
-    "width": 300
+    "width": 300,
+    "collapsed": true
   },
   "right": {
     "id": "8afb16914e71b8f5",
@@ -85,7 +106,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "SVG Documentation.md",
+                "file": "Classes.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -102,7 +123,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "SVG Documentation.md",
+                "file": "Classes.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -125,7 +146,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "SVG Documentation.md"
+                "file": "Classes.md"
               }
             }
           }
@@ -146,9 +167,9 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "5d10c1afa9a0540c",
+  "active": "da84ebbd9201e823",
   "lastOpenFiles": [
-    "Classes.md",
-    "SVG Documentation.md"
+    "SVG Documentation.md",
+    "Classes.md"
   ]
 }
