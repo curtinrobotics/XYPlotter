@@ -1,27 +1,40 @@
 ## What is SVG?
 
-Scalable Vector Graphics (SVG) codes 2D images using Extensible Markup Language (XML).
+Scalable Vector Graphics (SVG) codes 2D images using Extensible Markup Language (XML). Most information retrieved from: (_SVG Tutorial - SVG_, 2023)
+
+Please note all x & y positions are measured from the top left corners and positive values represent a translation right and down respectively: 
+ - x position measured pixels from left, positive x is directed right; and 
+ - y position measured pixels from top, positive y is directed down
 
 ## Why are we using SVG?
 
 We want to use SVG because it enables us to code in scalable and resizable pictures (ie vector images).
 
 ### Basic shapes (elements) of SVG we are implementing 
-We will list the elements below in the form
+We will list the elements below with their elements. Note all transformations (eg: fill, stroke-width, stroke) will be discussed in the following heading under the <\g> element.
 
-* basic shape: 
-	* parameter1 (explanation1) 
-	* parameter2 (explanation2)
-	* etc
+* circle
+	* cx = x-coordinate
+	* cy = y-coordinate
+	* r = radius
+	* Eg: `<circle cx=40, cy=50, r=10 ` 
+* rect
+	* x = x-coordinate
+	* y = y-coordinate
+	* width 
+	* height 
+	* rx = x-radius of corners of rectangle
+	* ry = y-radius of corners of rectangle
+	* Eg: `<rect x="10" y="10" width="30" height="30">`
 * text: 
-	* x (x position measured pixels from left, positive x is directed right)
-	* y (y position measured pixels from top, positive y is directed down)
-	* fill (colour filling the object)
-	* stroke (colour drawn around object)
-	* stroke-linecap (how the ends of the lines end, eg: "butt", "round", "square")
-	* stroke-width (thickness of line)
-	* stroke-linejoin (how lines are joined, eg: mitre, bevel, round)
-
+	* x 
+	* y 
+* circle 
+* ellipse 
+* line 
+* polyline 
+* polygon 
+ 
 
 * path:  ``` <path> ```
 	* d (defines a path to be drawn. contains list of commands and parameters used by the commands) string of series commands to be drawn[^1] 
@@ -51,6 +64,18 @@ We will list the elements below in the form
 	* ```<polyline>``` is an inferior version and doesn't scale up well (uses lots of small lines)
 	* 
 
+
+### The <\g> ELement
+Essentially this is a container which contains other SVG elements and groups them together. 
+Transformations applied to the <\g> element are inherited by all the elements it contains ie:
+``` 
+<svg width ="30", height = "10">
+  <g fill="white" stroke="green" stroke-width="5">
+    <elements parameter="40"/>
+  </g>
+</svg>
+``` 
+
 ## Examples
 
 SVG lines of code start with
@@ -67,6 +92,9 @@ We aren't implementing images (element "img") because we haven't the capabilitie
 We aren't implementing the attribute in-fill
 
 
+Further Reading & Bibliography:
+
+_SVG Tutorial - SVG: Scalable Vector Graphics | MDN_. (2023, March 6). [https://developer.mozilla.org/en-US/docs/Web/SVG/Tutorial](https://developer.mozilla.org/en-US/docs/Web/SVG/Tutorial)
 
 
 
