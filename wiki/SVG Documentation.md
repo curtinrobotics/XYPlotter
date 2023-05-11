@@ -17,7 +17,7 @@ We will list the elements below with their elements. Note all transformations (e
 	* cx = x-coordinate
 	* cy = y-coordinate
 	* r = radius
-	* Eg: `<circle cx=40, cy=50, r=10 ` 
+	* Eg: `<circle cx=40 cy=50 r=10/>` 
 * rect
 	* x = x-coordinate
 	* y = y-coordinate
@@ -25,7 +25,7 @@ We will list the elements below with their elements. Note all transformations (e
 	* height 
 	* rx = x-radius of corners of rectangle
 	* ry = y-radius of corners of rectangle
-	* Eg: `<rect x="10" y="10" width="30" height="30">`
+	* Eg: `<rect x="10" y="10" width="30" height="30"/>`
 * text: 
 	* x 
 	* y 
