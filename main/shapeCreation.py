@@ -213,10 +213,3 @@ def outputCreateShapeError(state, shapeName, attribute):
         printe("Attribute \"" + str(attribute) + "\" not invalid for \"" + shapeName + "\"")
     else:
         printe("Attribute \"" + str(attribute) + "\" had internal error for \"" + shapeName + "\"")
-
-
-"""Creates list of attributes from g container"""
-def createGroupAttributeList(groupContainerData):
-    attributeList = []
-    # extract attributes from g container, appending to list
-    return attributeList
