@@ -6,27 +6,54 @@ Should be similar to robotPlot.cpp.
 
 import turtle
 import constants
+from pointCreation import getMaxPoints
 
-"""Output points to screen with turtle"""
-def drawPointsTurtle(plo):
-    maxPoints = plo.getMaxPoints(plo.pointsList)
-    # Turtle settings for screen
+"""Main function for plotting image"""
+def turtlePlot(pointList):
+    maxX, maxY, minX, minY = getMaxPoints(pointList)
+    screenWidth, screenHeight = setupScreen(maxX, maxY)
+    t = setupTurtle()
+    pointList = scalePoints(pointList, screenWidth, screenHeight)
+    drawPoints(t, pointList)
+
+
+"""Creates screen to plotting"""
+def setupScreen(maxX, maxY):
     screen = turtle.Screen()
-    canvasWidth = maxPoints[0] * constants.IMAGE_SCALING
-    canvasHeight = maxPoints[1] * constants.IMAGE_SCALING
-    turtle.screensize(canvasWidth, canvasHeight)
-    screen.setup(canvasWidth + 50, canvasHeight + 50)
+    screenWidth = maxX * constants.IMAGE_SCALING
+    screenHeight = maxY * constants.IMAGE_SCALING
+    turtle.screensize(screenWidth, screenHeight)
+    screen.setup(screenWidth + 50, screenHeight + 50)
+    return screenWidth, screenHeight
+
+
+"""Creates turtle for plotting on screen"""
+def setupTurtle():
     turtle.tracer(1, constants.DRAWING_DELAY)
     t = turtle.Turtle()
     t.hideturtle()
     t.left(90)
+    return t
 
-    # Drawing of points
-    for i in range(int(len(plo.pointsList) / 2)):
-        if plo.pointsList[i * 2] == "up":
+
+"""Scales points to fit on screen"""
+def scalePoints(pointList, screenWidth, screenHeight):
+    # Moves point to be in middle of screen, instead of only being positive
+    # Inverts y-axis
+    for i in range(0, len(pointList), 2):
+        curX = pointList[i]
+        if curX != "up" and curX != "down":
+            pointList[i] = pointList[i] * constants.IMAGE_SCALING - screenWidth / 2
+            pointList[i + 1] = pointList[i + 1] * -constants.IMAGE_SCALING + screenHeight / 2
+    return pointList
+
+
+"""Output points to screen with turtle"""
+def drawPoints(t, pointList):
+    for i in range(0, len(pointList), 2):
+        if pointList[i] == "up":
             t.penup()
-        elif plo.pointsList[i * 2] == "down":
+        elif pointList[i] == "down":
             t.pendown()
         else:
-            t.setpos(plo.pointsList[i * 2] * constants.IMAGE_SCALING - canvasWidth / 2,
-                     -plo.pointsList[i * 2 + 1] * constants.IMAGE_SCALING + canvasHeight / 2)
+            t.setpos(pointList[i], pointList[i+1])

@@ -4,6 +4,7 @@
     "type": "split",
     "children": [
       {
+<<<<<<< HEAD
         "id": "e26646e08b30c4e5",
         "type": "tabs",
         "children": [
@@ -14,16 +15,41 @@
               "type": "diagram-edit",
               "state": {
                 "file": "Class UML diagrams.svg"
+=======
+        "id": "4793e460cfa40cca",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "7daed5fe5854399c",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Program Flow/Main.md",
+                "mode": "source",
+                "source": false
+>>>>>>> 70a776f0c482f5e03a9070169c84278efb162efd
               }
             }
           },
           {
+<<<<<<< HEAD
             "id": "c6970519f0cb6dde",
             "type": "leaf",
             "state": {
               "type": "diagram",
               "state": {
                 "file": "Class UML diagrams.svg"
+=======
+            "id": "7f09e4cd1f2df7cb",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Things To Do.md",
+                "mode": "preview",
+                "source": false
+>>>>>>> 70a776f0c482f5e03a9070169c84278efb162efd
               }
             }
           }
@@ -65,7 +91,21 @@
             }
           },
           {
+<<<<<<< HEAD
             "id": "3cc317236b33f5f4",
+=======
+            "id": "8aea6ab14464fc0f",
+            "type": "leaf",
+            "state": {
+              "type": "diagram-edit",
+              "state": {
+                "file": "Program Flow/Untitled Diagram.svg"
+              }
+            }
+          },
+          {
+            "id": "008cb489fc279a63",
+>>>>>>> 70a776f0c482f5e03a9070169c84278efb162efd
             "type": "leaf",
             "state": {
               "type": "file-explorer",
@@ -75,7 +115,11 @@
             }
           },
           {
+<<<<<<< HEAD
             "id": "f9e60bab302a12ef",
+=======
+            "id": "e2075027044448a5",
+>>>>>>> 70a776f0c482f5e03a9070169c84278efb162efd
             "type": "leaf",
             "state": {
               "type": "bookmarks",
@@ -83,11 +127,19 @@
             }
           }
         ],
+<<<<<<< HEAD
         "currentTab": 2
       }
     ],
     "direction": "horizontal",
     "width": 790.5
+=======
+        "currentTab": 3
+      }
+    ],
+    "direction": "horizontal",
+    "width": 260.5
+>>>>>>> 70a776f0c482f5e03a9070169c84278efb162efd
   },
   "right": {
     "id": "8afb16914e71b8f5",
@@ -103,6 +155,7 @@
             "state": {
               "type": "backlink",
               "state": {
+                "file": "Program Flow/Main.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -119,6 +172,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
+                "file": "Program Flow/Main.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -140,7 +194,9 @@
             "type": "leaf",
             "state": {
               "type": "outline",
-              "state": {}
+              "state": {
+                "file": "Program Flow/Main.md"
+              }
             }
           }
         ]
@@ -160,8 +216,53 @@
       "command-palette:Open command palette": false
     }
   },
+<<<<<<< HEAD
   "active": "3cc317236b33f5f4",
   "lastOpenFiles": [
     "Class UML diagrams.svg"
+=======
+  "active": "7daed5fe5854399c",
+  "lastOpenFiles": [
+    "Things To Do.md",
+    "Program Flow/Point Creation.md",
+    "Program Flow/Main.md",
+    "Program Flow/Pi Robot Plot.md",
+    "Program Flow/Robot Plot.md",
+    "Program Flow/Turtle Plot.md",
+    "Program Flow/LCD.md",
+    "Program Flow/GUI.md",
+    "Program Flow/program flow diagrams/turtlePlot.svg",
+    "Program Flow/program flow diagrams/turtlePlot.io.drawio.svg",
+    "Program Flow/program flow diagrams/turtlePlot.io.crswap",
+    "Program Flow/Shape Creation.md",
+    "Program Flow/program flow diagrams/turtlePlot.io",
+    "Program Flow/program flow diagrams/pointCreation (copy).io",
+    "Program Flow/Main.canvas",
+    "Program Flow/Log.md",
+    "Program Flow/Shape.md",
+    "Program Flow/program flow diagrams/pointCreation.svg",
+    "Program Flow/program flow diagrams/pointCreation.io.drawio.svg",
+    "Program Flow/program flow diagrams/pointCreation.io.crswap",
+    "Program Flow/Shape Path.md",
+    "Program Flow/program flow diagrams/pointCreation.io",
+    "Program Flow/program flow diagrams/shapeCreation (copy).io",
+    "SVG Documentation.md",
+    "Program Flow/SVG File.md",
+    "Program Flow/Input Output.md",
+    "Classes.md",
+    "Program Flow/program flow diagrams/shapeCreation.svg",
+    "Program Flow/program flow diagrams/main.svg",
+    "Program Flow/program flow diagrams/shapeCreation.io.drawio.svg",
+    "Program Flow/program flow diagrams/main.io.drawio.svg",
+    "Program Flow/program flow diagrams/shapeCreation.io.crswap",
+    "Program Flow/program flow diagrams/main.io.crswap",
+    "Program Flow/Setup.md",
+    "Program Flow/Constants.md",
+    "Program Flow/program flow diagrams/shapeCreation.io",
+    "Program Flow/program flow diagrams/main (copy).io",
+    "Program Flow/Untitled.md",
+    "Program Flow/Untitled Diagram.svg",
+    "Untitled Diagram.svg"
+>>>>>>> 70a776f0c482f5e03a9070169c84278efb162efd
   ]
 }
