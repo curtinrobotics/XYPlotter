@@ -71,7 +71,7 @@ Transformations applied to the <\g> element are inherited by all the elements it
 ``` 
 <svg width ="30", height = "10">
   <g fill="white" stroke="green" stroke-width="5">
-    <elements parameter="40"/>
+    <shape parameter = "number"/>
   </g>
 </svg>
 ``` 

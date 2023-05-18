@@ -30,3 +30,7 @@ Flow diagram for overall progam flow
 Flow diagram for each file program flow (for ones that have program flow)
 File on each program file for what is manages
 - Add links to constants and log file
+
+# Error Checking
+Sample svg file testing all shapes
+File testing the output is correct
