@@ -1,21 +1,25 @@
-# Assemble Chassie
-## Center Chassie
+# Assemble Chassis
+## Center Chassis
 Add bearings for the belt (large belt)
 Add bearings for the rods (8mm)
-Print Chassie
+Print Chassis
 
-## Assemble the Chassie
-Ensure parts all fit togenther
+## Stepper Motor Gears
+Design gears to interface with the steppers and belt (large belt)
+Print gears
+
+## Assemble the Chassis
+Ensure parts all fit together
 
 # Code Arduino to Plot
 ## Program Arduino to Move Stepper Motors
 Arduino can move in a pre-defined path
 
 ## Laptop and Arduino Communication
-Have Arduino communicate to laptop to recieve path data
+Have Arduino communicate to laptop to receive path data
 
 ## Put It All Together
-Full plotting firmware to recieve data from laptop and plot points
+Full plotting firmware to receive data from laptop and plot points
 
 ## Add Documentation
 Add documentation in [[Robot Plot]] on how the program works (should be simmilar to [[Turtle Plot]])
@@ -25,8 +29,8 @@ Add documentation in [[Robot Plot]] on how the program works (should be simmilar
 Implement extracting text from SVG
 Convert text to points with use of a font file (or similar)
 
-## Testing
-Create testing SVG file containing all shapes (and varients)
+## Testing / Error Checking
+Create testing SVG file containing all shapes (and variants)
 Create testing python file to test the expected output
 
 ## Elliptical Path
@@ -38,6 +42,8 @@ How an SVG file formatting works
 	Mostly done in [[SVG Documentation]]
 
 ## Program Structure
+Flow diagram for overall program flow
+Flow diagram for each file program flow (for ones that have program flow)
 File on each program file for what is manages
 - Add links for constants and log file communication
 
