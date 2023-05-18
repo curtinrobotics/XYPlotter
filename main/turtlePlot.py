@@ -20,8 +20,8 @@ def turtlePlot(pointList):
 """Creates screen to plotting"""
 def setupScreen(maxX, maxY):
     screen = turtle.Screen()
-    screenWidth = maxX * constants.IMAGE_SCALING
-    screenHeight = maxY * constants.IMAGE_SCALING
+    screenWidth = maxX * constants.TURTLE_IMAGE_SCALING
+    screenHeight = maxY * constants.TURTLE_IMAGE_SCALING
     turtle.screensize(screenWidth, screenHeight)
     screen.setup(screenWidth + 50, screenHeight + 50)
     return screenWidth, screenHeight
