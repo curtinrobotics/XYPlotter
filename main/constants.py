@@ -15,7 +15,7 @@ DEBUG_OUTPUT = True      # For general debugging
 FILE = "sgvFiles/pathTest.svg"  # Source file for plotting
 
 # Turtle Output
-IMAGE_SCALING = 0.5  # Scale image to fit screen (>0)
+IMAGE_SCALING = 1.5  # Scale image to fit screen (>0)
 DRAWING_DELAY = 0  # Delay between drawing points (0-30)
 
 # Points Resolution

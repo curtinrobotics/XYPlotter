@@ -568,9 +568,9 @@ class Path(Shape):
                 printe("Path \"" + str(cmd[TYPE]) + "\" type not found")
             if newCommand is not None:
                 if cmd[TYPE] in PATH_COMMANDS:
-                    newCommand.isRelative = True
-                else:
                     newCommand.isRelative = False
+                else:
+                    newCommand.isRelative = True
             commandPathList.append(newCommand)
 
         # Get points
@@ -584,11 +584,11 @@ class Path(Shape):
             # Set previous points
             cmd.xStart = xPrev
             cmd.yStart = yPrev
-            if type(cmd) in [type(shapePath.CubicCurve), type(shapePath.SmoothCubicCurve)] and prevCmd == "C":
+            if type(cmd) in [shapePath.CubicCurve, shapePath.SmoothCubicCurve] and prevCmd == "C":
                 cmd.xPrev2 = xPrev2
                 cmd.yPrev2 = yPrev2
                 cmd.prevIsCubic = True
-            if type(cmd) in [type(shapePath.QuadraticCurve), type(shapePath.SmoothQuadraticCurve)] and prevCmd == "Q":
+            if type(cmd) in [shapePath.QuadraticCurve, shapePath.SmoothQuadraticCurve] and prevCmd == "Q":
                 cmd.xPrev2 = xPrev2
                 cmd.yPrev2 = yPrev2
                 cmd.prevIsQuadratic = True
@@ -605,11 +605,11 @@ class Path(Shape):
             xPrev = curPointList[-2]
             yPrev = curPointList[-1]
             prevCmd = "Z"
-            if type(cmd) in [type(shapePath.CubicCurve), type(shapePath.SmoothCubicCurve)]:
+            if type(cmd) in [shapePath.CubicCurve, shapePath.SmoothCubicCurve]:
                 xPrev2 = cmd.x2[-1]
                 yPrev2 = cmd.y2[-1]
                 prevCmd = "C"
-            if type(cmd) in [type(shapePath.QuadraticCurve), type(shapePath.SmoothQuadraticCurve)]:
+            if type(cmd) in [shapePath.QuadraticCurve, shapePath.SmoothQuadraticCurve]:
                 xPrev2 = cmd.x1[-1]
                 yPrev2 = cmd.y1[-1]
                 prevCmd = "Q"
@@ -840,6 +840,7 @@ def _getFloatPoints(pointString):
     curPoint = ""
     for char in pointString:
         if char == "," or char == " " or char == "-":
+            curPoint = curPoint.strip()
             if curPoint != "" and curPoint != "-":
                 pointList.append(float(curPoint))
             if char == "-":
@@ -848,6 +849,7 @@ def _getFloatPoints(pointString):
                 curPoint = ""
         else:
             curPoint += char
+    curPoint = curPoint.strip()
     if curPoint != "" and curPoint != "-":
         pointList.append(float(curPoint))
     return pointList
