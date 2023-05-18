@@ -4,18 +4,31 @@
     "type": "split",
     "children": [
       {
-        "id": "551a47f0354a7e5b",
+        "id": "e26646e08b30c4e5",
         "type": "tabs",
         "children": [
           {
-            "id": "5d10c1afa9a0540c",
+            "id": "a75efb8b8cb6de61",
             "type": "leaf",
             "state": {
-              "type": "empty",
-              "state": {}
+              "type": "diagram-edit",
+              "state": {
+                "file": "Class UML diagrams.svg"
+              }
+            }
+          },
+          {
+            "id": "c6970519f0cb6dde",
+            "type": "leaf",
+            "state": {
+              "type": "diagram",
+              "state": {
+                "file": "Class UML diagrams.svg"
+              }
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -28,16 +41,6 @@
         "id": "85920a62d9485ab9",
         "type": "tabs",
         "children": [
-          {
-            "id": "e577fdc636f54dee",
-            "type": "leaf",
-            "state": {
-              "type": "file-explorer",
-              "state": {
-                "sortOrder": "alphabetical"
-              }
-            }
-          },
           {
             "id": "d63e86451718c114",
             "type": "leaf",
@@ -60,12 +63,31 @@
               "type": "starred",
               "state": {}
             }
+          },
+          {
+            "id": "3cc317236b33f5f4",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical"
+              }
+            }
+          },
+          {
+            "id": "f9e60bab302a12ef",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {}
+            }
           }
-        ]
+        ],
+        "currentTab": 2
       }
     ],
     "direction": "horizontal",
-    "width": 300
+    "width": 790.5
   },
   "right": {
     "id": "8afb16914e71b8f5",
@@ -138,6 +160,8 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "5d10c1afa9a0540c",
-  "lastOpenFiles": []
+  "active": "3cc317236b33f5f4",
+  "lastOpenFiles": [
+    "Class UML diagrams.svg"
+  ]
 }
