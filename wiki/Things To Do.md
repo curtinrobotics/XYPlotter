@@ -4,10 +4,6 @@ Add bearings for the belt (large belt)
 Add bearings for the rods (8mm)
 Print Chassis
 
-## Stepper Motor Gears
-Design gears to interface with the steppers and belt (large belt)
-Print gears
-
 ## Assemble the Chassis
 Ensure parts all fit together
 

@@ -30,9 +30,9 @@ Types of class fields:
  - Never: Not implemented, won't be implemented
 """
 
-import math
 import constants
 import shapePath
+import pointList
 from inputOutput import printd, printw, printe
 
 # Constants used in file
@@ -110,9 +110,9 @@ class Shape:
         return outString
 
     """Transforms points from shape with respect to transform attribute"""
-    def transformPoints(self, pointsList):
+    def transformPoints(self, pointList):
         # not implemented yet
-        return pointsList
+        return pointList
 
 
 class Rectangle(Shape):
@@ -171,7 +171,7 @@ class Rectangle(Shape):
 
     """Creates points based of attributes of shape"""
     def getPoints(self):
-        pl = PointsList()
+        pl = pointList.PointList()
         pl.penUp()
         pl.addPoint(self.x + self.rx, self.y)
         pl.penDown()
@@ -194,7 +194,7 @@ class Rectangle(Shape):
             pl.addPoint(self.x, self.y + self.height)
             pl.addPoint(self.x, self.y)
         pl.penUp()
-        return pl.getPointsList()
+        return pl
 
 
 class Ellipse(Shape):
@@ -242,7 +242,7 @@ class Ellipse(Shape):
 
     """Creates points based of attributes of shape"""
     def getPoints(self):
-        pl = PointsList()
+        pl = pointList.PointList()
 
         pl.penUp()
         pl.addPoint(self.cx + self.rx, self.cy)
@@ -251,7 +251,7 @@ class Ellipse(Shape):
         pl.penUp()
 
         pl.penUp()
-        return pl.getPointsList()
+        return pl
 
 
 class Circle(Ellipse):
@@ -320,16 +320,16 @@ class Polyline(Shape):
 
     """Creates points based of attributes of shape"""
     def getPoints(self):
-        pl = PointsList()
+        pl = pointList.PointList()
 
-        pointList = _getFloatPoints(self.points)
+        floatList = _getFloatPoints(self.points)
 
         pl.penUp()
-        pl.addPoint(pointList[0], pointList[1])
+        pl.addPoint(floatList[0], floatList[1])
         pl.penDown()
-        pl.extend(pointList[2:])
+        pl.extend(floatList[2:])
         pl.penUp()
-        return pl.getPointsList()
+        return pl
 
 
 class Polygon(Polyline):
@@ -355,17 +355,17 @@ class Polygon(Polyline):
 
     """Creates points based of attributes of shape"""
     def getPoints(self):
-        pl = PointsList()
+        pl = pointList.PointList()
 
-        pointList = _getFloatPoints(self.points)
+        floatList = _getFloatPoints(self.points)
 
         pl.penUp()
-        pl.addPoint(pointList[0], pointList[1])
+        pl.addPoint(floatList[0], floatList[1])
         pl.penDown()
-        pl.extend(pointList[2:])
-        pl.addPoint(pointList[0], pointList[1])
+        pl.extend(floatList[2:])
+        pl.addPoint(floatList[0], floatList[1])
         pl.penUp()
-        return pl.getPointsList()
+        return pl
 
 
 class Line(Polyline):
@@ -448,7 +448,7 @@ class Path(Shape):
 
     """Creates points based of attributes of shape"""
     def getPoints(self):
-        pl = PointsList()
+        pl = pointList.PointList()
 
         PATH_COMMAND_LENGTH = {"M": 2, "L": 2, "H": 1, "V": 1, "C": 6, "S": 4, "Q": 4, "T": 2, "A": 7, "Z": 0}
         FULL_PATH_COMMANDS = {"M": 2, "L": 2, "H": 2, "V": 2, "C": 8, "S": 8, "Q": 6, "T": 6, "A": 9, "Z": 0}
@@ -473,9 +473,9 @@ class Path(Shape):
             commandName = commandString[0]
             pointString = commandString[1:]
 
-            pointList = _getFloatPoints(pointString)
+            floatList = _getFloatPoints(pointString)
 
-            commandPointList.append((commandName, pointList))
+            commandPointList.append((commandName, floatList))
         printd(commandPointList)
 
         # Create path objects from points
@@ -574,7 +574,7 @@ class Path(Shape):
             commandPathList.append(newCommand)
 
         # Get points
-        pl = PointsList()
+        pl = pointList.PointList()
         xPrev = 0
         yPrev = 0
         xPrev2 = 0
@@ -615,7 +615,7 @@ class Path(Shape):
                 prevCmd = "Q"
 
         pl.penUp()
-        return pl.getPointsList()
+        return pl
 
 
         '''
@@ -781,7 +781,7 @@ class Path(Shape):
 
         pl.penUp()
         '''
-        return pl.getPointsList()
+        return pl
 
 
 class Text(Shape):
@@ -815,12 +815,12 @@ class Text(Shape):
 
     """Creates points based of attributes of shape"""
     def getPoints(self):
-        pl = PointsList()
+        pl = pointList.PointList()
 
         printw("Text Shape not implemented")
         printd("Text: " + self.text)
 
-        return pl.getPointsList()
+        return pl
 
 
 """Checks if value is a float, returning value if float"""
@@ -853,45 +853,4 @@ def _getFloatPoints(pointString):
     if curPoint != "" and curPoint != "-":
         pointList.append(float(curPoint))
     return pointList
-
-"""Class for creating points list"""
-class PointsList:
-    def __init__(self):
-        self.pointList = []
-
-    """Appends "up" twice for pen up command"""
-    def penUp(self):
-        self.pointList.append("up")
-        self.pointList.append("up")
-
-    """Appends "down" twice for pen down command"""
-    def penDown(self):
-        self.pointList.append("down")
-        self.pointList.append("down")
-
-    """Appends x and y to point list"""
-    def addPoint(self, x, y):
-        self.pointList.append(x)
-        self.pointList.append(y)
-
-    """Appends list of points onto current list"""
-    def extend(self, pointList):
-        self.pointList.extend(pointList)
-
-    """Removes last x and y point from point list"""
-    def removePoint(self):
-        self.pointList.pop()
-        self.pointList.pop()
-
-    """Appends list of points to create arc"""
-    def drawArc(self, xPos, yPos, rx, ry, startDegree, arcDegree, res):
-        sRad = startDegree * math.pi/180  # Start pos
-        rad = arcDegree * math.pi/180  # Move amount
-        for step in range(res+1):
-            x = xPos + rx * math.cos((rad/res)*step + sRad)
-            y = yPos + ry * math.sin((rad/res)*step + sRad)
-            self.addPoint(x, y)
-
-    def getPointsList(self):
-        return self.pointList
 
