@@ -35,3 +35,18 @@ def readFileData(file):
         except FileNotFoundError:
             printe("ERROR: Invalid file.\n Please recomplie with valid file")
     return fileText
+
+"""Write data to file"""
+def writeFileData(file, data):
+    success = False
+    with open(file, "w") as fileObj:
+        try:
+            fileObj.write(data)
+            success = True
+        except FileNotFoundError:
+            printe("ERROR: Invalid file.\n Please recomplie with valid file")
+            success = False
+        except TypeError:
+            printe("ERROR: Invalid data type.\n Please recompile with valid data")
+            success = False
+    return success

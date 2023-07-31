@@ -29,6 +29,3 @@ pointList = pointCreation.pointCreation(shapeList)
 
 # Plot Points
 turtlePlot.turtlePlot(pointList)
-
-
-input()  # delay to keep drawing open

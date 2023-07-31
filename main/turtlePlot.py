@@ -22,10 +22,12 @@ def turtlePlot(pl):
         drawPlotterSize(t, scaledWidth, scaledHeight)
     drawPoints(t, pl)
 
+    t.screen.mainloop() # Waits for process termination to close the plot
 
 """Creates screen to plotting"""
 def setupScreen(maxPoints, imageScaling):
     screen = turtle.Screen()
+    screen.colormode(255) # Allows for rgb values between 0-255
     screenWidth = maxPoints.maxX * imageScaling
     screenHeight = maxPoints.maxY * imageScaling
     turtle.screensize(screenWidth, screenHeight)
