@@ -22,7 +22,7 @@ def getVariables(ignoreUnchangeable = True, filePath = CONSTANTS_FILE_PATH):
 
         ([A-Z_]+)
         \s?=\s?
-        (["A-Za-z0-9'/\\\.]+ | [\(\[] [ 0-9,]+ [\)\]])
+        (["A-Za-z0-9'/\\\.,_\-]+ | [\(\[] [ 0-9,]+ [\)\]])
         (\s*\#.+)*
 
     ''', re.VERBOSE | re.DOTALL)
