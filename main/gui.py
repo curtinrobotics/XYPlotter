@@ -55,7 +55,14 @@ def save_selection():
     if selection:
         global selected_file
         selected_file = listbox.get(selection)
-        mb.showinfo(title="SUCCESS", message='File successfully saved!')
+        
+        filePath = '\"sgvFiles/' + selected_file + '\"'
+
+        # Save filePath in constants.py
+        if setup.setVariable(setup.ConstantVariable('FILE', filePath, '   # Source file for plotting')):
+            mb.showinfo(title="SUCCESS", message='File successfully saved!')
+        else:
+            mb.showerror(title="FAILURE", message='File could not be saved!')
     else:
         mb.showwarning(title="WARNING", message='Ensure that you have first selected a file!')
 
@@ -76,12 +83,11 @@ def run_selection():
         mb.showwarning(title="WARNING", message='Ensure that you have first saved a selection!')
         return
 
-    # Save filePath in constants.py
-    if setup.setVariable(setup.ConstantVariable('FILE', filePath, '   # Source file for plotting')):
-        try:
-            subprocess.run(['python3', 'main.py', 'gui'])
-        except Exception as e:
-            print(e)
+    # Run main.py
+    try:
+        subprocess.run(['python3', 'main.py', 'gui'])
+    except Exception as e:
+        print(e)
     
 
 # Button to execute run_selection()
