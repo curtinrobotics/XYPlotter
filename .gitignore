@@ -1,3 +1,3 @@
-main/__pychache__/
-.idea/
-wiki/.obsidian/
+main/__pychache__/*
+.idea/*
+wiki/.obsidian/*
