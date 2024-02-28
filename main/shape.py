@@ -319,15 +319,20 @@ class Polyline(Shape):
         return isValid
 
     """Creates points based of attributes of shape"""
+    
     def getPoints(self):
         pl = pointList.PointList()
 
         floatList = _getFloatPoints(self.points)
 
+        print('FloatList rest', floatList[2:])
+
         pl.penUp()
         pl.addPoint(floatList[0], floatList[1])
         pl.penDown()
-        pl.extend(floatList[2:])
+        for i in range(int(len(floatList[2:])/2)): 
+            pl.addPoint(floatList[2+2*i], floatList[3+2*i])
+        #pl.extend(floatList[2:])
         pl.penUp()
         return pl
 
@@ -363,6 +368,23 @@ class Polygon(Polyline):
         pl.addPoint(floatList[0], floatList[1])
         pl.penDown()
         pl.extend(floatList[2:])
+        pl.addPoint(floatList[0], floatList[1])
+        pl.penUp()
+        return pl
+    def getPoints(self):
+        pl = pointList.PointList()
+
+        floatList = _getFloatPoints(self.points)
+
+        #pl.penUp()
+        #pl.addPoint(floatList[0], floatList[1])
+        #pl.penDown()
+        #for i in range(int(len(floatList[2:])/2)): 
+        #    pl.addPoint(floatList[2+2*i], floatList[3+2*i])
+        #pl.extend(floatList[2:])
+        
+        pl = super().getPoints()
+        pl.penDown()
         pl.addPoint(floatList[0], floatList[1])
         pl.penUp()
         return pl
@@ -593,17 +615,30 @@ class Path(Shape):
                 cmd.yPrev2 = yPrev2
                 cmd.prevIsQuadratic = True
 
+
             # Get points
+            
             curPointList = cmd.getPoints()
             if type(cmd) == shapePath.Move:
                 pl.penUp()
             else:
                 pl.penDown()
-            pl.extend(curPointList)
+            
+            if type(cmd) == shapePath.Arc:
+                pl.drawPathArc(cmd.xStart, cmd.yStart, cmd.rx[0], cmd.ry[0], cmd.rotation[0], int(cmd.largeArcFlag[0]), int(cmd.sweepFlag[0]), cmd.xEnd[0], cmd.yEnd[0])
+                #pl.drawArc(curPointList[0], curPointList[1], int(cmd.rx[0]), int(cmd.ry[0]), 10, 0, 130)
+            else:
+                for i in range(int(len(curPointList)/2)): 
+                    pl.addPoint(curPointList[0+2*i], curPointList[1+2*i])
+                    pl.list[-1].cat = pointList.PointCategory.Command
+            #pl.extend(curPointList)
+            #pl.addPoint(curPointList[0], curPointList[1])
 
             # Get previous points
-            xPrev = curPointList[-2]
-            yPrev = curPointList[-1]
+            xPrev = pl.list[-1].x
+            yPrev = pl.list[-1].y
+            #xPrev = curPointList[-2]
+            #yPrev = curPointList[-1]
             prevCmd = "Z"
             if type(cmd) in [shapePath.CubicCurve, shapePath.SmoothCubicCurve]:
                 xPrev2 = cmd.x2[-1]
