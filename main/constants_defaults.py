@@ -10,9 +10,9 @@ Can be changed with setup.py.
 #       which is used by the gui to determine type of variable
 
 # Print message type flag
-ERROR_OUTPUT = True      # For errors that cause features missing   | type=bool
-WARNING_OUTPUT = True    # For partially implemented features   | type=bool
-DEBUG_OUTPUT = True      # For general debugging    | type=bool
+ERROR_OUTPUT = True      # For errors that cause features missing   | type=bool  log
+WARNING_OUTPUT = True    # For partially implemented features   | type=bool  log
+DEBUG_OUTPUT = True      # For general debugging    | type=bool  log
 
 # File IO
 FILE = "sgvFiles/rectangleTest.svg"   # Source file for plotting
@@ -39,3 +39,5 @@ ROUND_DECIMAL_POINTS = 1  # Number of decimal points to round to when culling im
 
 # RESTRICTED
 # ^ Do not change - signifies to setup.py that constants below this are not to be changed
+
+# Note: any restricted variables do not need to be added from constants.py to constants_default.py
