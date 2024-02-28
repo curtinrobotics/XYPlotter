@@ -1,0 +1,15 @@
+TIMESTAMP:	2023-12-04 12:59:20.165902
+ERROR:	Opening Container "svg" type not found
+DEBUG:	Shape "path" being processed
+DEBUG:	Attribute "d" added to "path"
+ERROR:	Closing Container "svg" type not found
+DEBUG:	
+Working on shape: shape.Path
+DEBUG:	['M 154.0 321.0', 'C 154.0 321.0 497.0 113.0 457.0 452.0', 'S 747.0 431.0 704.0 333.0', 'S 958.0 149.0 887.0 336.0']
+DEBUG:	[('M', [154.0, 321.0]), ('C', [154.0, 321.0, 497.0, 113.0, 457.0, 452.0]), ('S', [747.0, 431.0, 704.0, 333.0]), ('S', [958.0, 149.0, 887.0, 336.0])]
+DEBUG:	Move: [154.0], [321.0]
+DEBUG:	CubicCurve: (154.0, 321.0), ([154.0], [321.0]), ([497.0], [113.0]), ([457.0], [452.0])
+DEBUG:	CubicCurve: (457.0, 452.0), ([417.0], [791.0]), ([747.0], [431.0]), ([704.0], [333.0])
+DEBUG:	CubicCurve: (704.0, 333.0), ([661.0], [235.0]), ([958.0], [149.0]), ([887.0], [336.0])
+DEBUG:	<pointList.PointList object at 0x7f703224ca90>
+DEBUG:	Main reloaded!
