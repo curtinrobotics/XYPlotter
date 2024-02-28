@@ -22,7 +22,7 @@ def getVariables(ignoreUnchangeable = True, filePath = CONSTANTS_FILE_PATH):
 
         ([A-Z_]+)
         \s?=\s?
-        (["A-Za-z0-9'/\\\.,_\-]+ | [\(\[] [ 0-9,]+ [\)\]])
+        (["A-Za-z0-9'/\\\.,_\-\s:]+ | [\(\[] [ 0-9,]+ [\)\]])
         (\s*\#.+)*
 
     ''', re.VERBOSE | re.DOTALL)
@@ -93,6 +93,7 @@ class ConstantVariable():
         self.value = value
         self.comment = comment
         self.type = type
+        self.debug = False
 
         self.min = 0
         self.max = 1
@@ -138,7 +139,9 @@ class ConstantVariable():
             \s*
             (?:max\s*\=\s*)*
             ([0-9]+)*
-
+            \s*
+            (log\s*)*
+                              
         ''', re.VERBOSE)
 
         match = re.search(tagRegex, self.getComment())
@@ -148,6 +151,7 @@ class ConstantVariable():
             foundType = match.groups()[0]
             self.min = match.groups()[1]
             self.max = match.groups()[2]
+            self.debug = match.groups()[3]
         
         else: foundType = 'str' # if not found, define type as string
 
