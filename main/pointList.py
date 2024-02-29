@@ -79,17 +79,17 @@ class PointList:
     """Appends list of points to create path arc"""
     def drawPathArc(self, xPos1, yPos1, rx, ry, rot, large, sweep, xPos2, yPos2):
         """
-        *Note, all inputs are given by svg data
+        *Note, all inputs are given by svg data\n
 
-        xPos1 (int) - X-Position of the first point on the path arc
-        yPos1 (int) - Y-Position of the first point on the path arc
-        rx (int) - The radius along the x-axis of the ellipse created by the path
-        ry (int) - The radius along the y-axis of the ellipse created by the path
-        rot (int) - The rotation of the ellipse created by the path in degrees
-        large (int) - Either 0 or 1 - Whether the desired path is the minor or major arc of the ellipse
-        sweep (int) - Either 0 or 1 - Whether the desired path moves at anticlockwise or clockwise angles from (xPos1, yPos1), respectively
-        xPos2 (int) - X-Position of the second point on the path arc
-        yPos2 (int) - Y-Position of the second point on the path arc
+        xPos1 (int) - X-Position of the first point on the path arc\n
+        yPos1 (int) - Y-Position of the first point on the path arc\n
+        rx (int) - The radius along the x-axis of the ellipse created by the path\n
+        ry (int) - The radius along the y-axis of the ellipse created by the path\n
+        rot (int) - The rotation of the ellipse created by the path in degrees\n
+        large (int) - Either 0 or 1 - Whether the desired path is the minor or major arc of the ellipse\n
+        sweep (int) - Either 0 or 1 - Whether the desired path moves at anticlockwise or clockwise angles from (xPos1, yPos1), respectively\n
+        xPos2 (int) - X-Position of the second point on the path arc\n
+        yPos2 (int) - Y-Position of the second point on the path arc\n
 
 
         For more info, refer to: 

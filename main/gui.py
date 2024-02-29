@@ -305,6 +305,9 @@ class VariablesFrame(tk.Frame):
         defaultsButton = tk.Button(self.variableFrame, text="Reset to Default?", command=self.verify)
         defaultsButton.pack(side=tk.RIGHT)
 
+    def resetPage(self):
+        self = VariablesFrame(self.master, self.parent)
+
     # Create variable changer tab
     def implement_Variables(self, frame):
         """ Function to add required variables to create a variable change interface in the given frame """
@@ -395,7 +398,9 @@ class VariablesFrame(tk.Frame):
             for var in defaultObjects:
                 setup.setVariable(var) # Save each variable as default
 
-            self.parent[MainFrame].previewCanvas.configure(width=self.parent[MainFrame].canvasWidth.get(), height=self.parent[MainFrame].canvasHeight.get())
+            self.parent.frameDict[MainFrame].previewCanvas.configure(width=self.parent.frameDict[MainFrame].canvasWidth.get(), height=self.parent.frameDict[MainFrame].canvasHeight.get())
+            
+            self.resetPage() # Reset the page
             self.createPage() # Re-create variable changer tab
 
 class LogFrame(tk.Frame):
