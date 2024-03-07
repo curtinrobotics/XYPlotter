@@ -327,7 +327,7 @@ class Polyline(Shape):
         pl.penUp()
         pl.addPoint(floatList[0], floatList[1])
         pl.penDown()
-        pl.extend(floatList[2:])
+        pl.extendFloat(floatList[2:])
         pl.penUp()
         return pl
 
@@ -362,7 +362,7 @@ class Polygon(Polyline):
         pl.penUp()
         pl.addPoint(floatList[0], floatList[1])
         pl.penDown()
-        pl.extend(floatList[2:])
+        pl.extendFloat(floatList[2:])
         pl.addPoint(floatList[0], floatList[1])
         pl.penUp()
         return pl
@@ -448,8 +448,6 @@ class Path(Shape):
 
     """Creates points based of attributes of shape"""
     def getPoints(self):
-        pl = pointList.PointList()
-
         PATH_COMMAND_LENGTH = {"M": 2, "L": 2, "H": 1, "V": 1, "C": 6, "S": 4, "Q": 4, "T": 2, "A": 7, "Z": 0}
         FULL_PATH_COMMANDS = {"M": 2, "L": 2, "H": 2, "V": 2, "C": 8, "S": 8, "Q": 6, "T": 6, "A": 9, "Z": 0}
 
@@ -486,33 +484,33 @@ class Path(Shape):
         yStart = commandPointList[0][POINT][1]
         for cmd in commandPointList:
             newCommand = None
-            if cmd[TYPE].upper() == "M":
+            if cmd[TYPE].upper() == "M":  # Move
                 newCommand = shapePath.Move()
                 cmdLength = newCommand.length
                 totalCmdLength = len(cmd[POINT])
                 for i in range(0, totalCmdLength,  cmdLength):
                     newCommand.x.append(cmd[POINT][i])
                     newCommand.y.append(cmd[POINT][i+1])
-            elif cmd[TYPE].upper() == "L":
+            elif cmd[TYPE].upper() == "L":  # Line
                 newCommand = shapePath.Line()
                 cmdLength = newCommand.length
                 totalCmdLength = len(cmd[POINT])
                 for i in range(0, totalCmdLength, cmdLength):
                     newCommand.x.append(cmd[POINT][i])
                     newCommand.y.append(cmd[POINT][i + 1])
-            elif cmd[TYPE].upper() == "H":
+            elif cmd[TYPE].upper() == "H":  # Horizontal Line
                 newCommand = shapePath.HorizontalLine()
                 cmdLength = newCommand.length
                 totalCmdLength = len(cmd[POINT])
                 for i in range(0, totalCmdLength, cmdLength):
                     newCommand.x.append(cmd[POINT][i])
-            elif cmd[TYPE].upper() == "V":
+            elif cmd[TYPE].upper() == "V":  # Vertical Line
                 newCommand = shapePath.VerticalLine()
                 cmdLength = newCommand.length
                 totalCmdLength = len(cmd[POINT])
                 for i in range(0, totalCmdLength, cmdLength):
                     newCommand.y.append(cmd[POINT][i])
-            elif cmd[TYPE].upper() == "C":
+            elif cmd[TYPE].upper() == "C":  # Cubic Curve
                 newCommand = shapePath.CubicCurve()
                 cmdLength = newCommand.length
                 totalCmdLength = len(cmd[POINT])
@@ -523,7 +521,7 @@ class Path(Shape):
                     newCommand.y2.append(cmd[POINT][i + 3])
                     newCommand.xEnd.append(cmd[POINT][i + 4])
                     newCommand.yEnd.append(cmd[POINT][i + 5])
-            elif cmd[TYPE].upper() == "S":
+            elif cmd[TYPE].upper() == "S":  # Smooth Cubic Curve
                 newCommand = shapePath.SmoothCubicCurve()
                 cmdLength = newCommand.length
                 totalCmdLength = len(cmd[POINT])
@@ -532,7 +530,7 @@ class Path(Shape):
                     newCommand.y2.append(cmd[POINT][i + 1])
                     newCommand.xEnd.append(cmd[POINT][i + 2])
                     newCommand.yEnd.append(cmd[POINT][i + 3])
-            elif cmd[TYPE].upper() == "Q":
+            elif cmd[TYPE].upper() == "Q":  # Quadratic Curve
                 newCommand = shapePath.QuadraticCurve()
                 cmdLength = newCommand.length
                 totalCmdLength = len(cmd[POINT])
@@ -541,14 +539,14 @@ class Path(Shape):
                     newCommand.y1.append(cmd[POINT][i + 1])
                     newCommand.xEnd.append(cmd[POINT][i + 2])
                     newCommand.yEnd.append(cmd[POINT][i + 3])
-            elif cmd[TYPE].upper() == "T":
+            elif cmd[TYPE].upper() == "T":  # Smooth Quadratic Curve
                 newCommand = shapePath.SmoothQuadraticCurve()
                 cmdLength = newCommand.length
                 totalCmdLength = len(cmd[POINT])
                 for i in range(0, totalCmdLength, cmdLength):
                     newCommand.xEnd.append(cmd[POINT][i])
                     newCommand.yEnd.append(cmd[POINT][i + 1])
-            elif cmd[TYPE].upper() == "A":
+            elif cmd[TYPE].upper() == "A":  # Arc
                 newCommand = shapePath.Arc()
                 cmdLength = newCommand.length
                 totalCmdLength = len(cmd[POINT])
@@ -560,7 +558,7 @@ class Path(Shape):
                     newCommand.sweepFlag.append(cmd[POINT][i + 4])
                     newCommand.xEnd.append(cmd[POINT][i + 5])
                     newCommand.yEnd.append(cmd[POINT][i + 6])
-            elif cmd[TYPE].upper() == "Z":
+            elif cmd[TYPE].upper() == "Z":  # Close Path
                 newCommand = shapePath.ClosePath()
                 newCommand.xEnd = xStart
                 newCommand.yEnd = yStart
@@ -599,7 +597,7 @@ class Path(Shape):
                 pl.penUp()
             else:
                 pl.penDown()
-            pl.extend(curPointList)
+            pl.extendFloat(curPointList)
 
             # Get previous points
             xPrev = curPointList[-2]
@@ -836,13 +834,14 @@ def _addFloat(value):
 
 """Gets points from string"""
 def _getFloatPoints(pointString):
-    pointList = []
+    # Search string for points
+    newList = []
     curPoint = ""
     for char in pointString:
         if char == "," or char == " " or char == "-":
             curPoint = curPoint.strip()
             if curPoint != "" and curPoint != "-":
-                pointList.append(float(curPoint))
+                newList.append(float(curPoint))
             if char == "-":
                 curPoint = char
             else:
@@ -851,6 +850,7 @@ def _getFloatPoints(pointString):
             curPoint += char
     curPoint = curPoint.strip()
     if curPoint != "" and curPoint != "-":
-        pointList.append(float(curPoint))
-    return pointList
+        newList.append(float(curPoint))
+    return newList
+
 

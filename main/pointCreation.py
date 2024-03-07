@@ -17,8 +17,7 @@ def pointCreation(shapeList):
             curPointList = curShape.getPoints()
             curPointList = curShape.transformPoints(curPointList)
             curPointList = pointReduction(curPointList)
-            pl.extend(curPointList)
-            printd(curPointList)
+            pl.extend(curPointList.list)
         else:
             printe("Shape " + str(curShape.name()) + " is invalid")
 
@@ -67,8 +66,6 @@ def scalePoints(pl):
             if curPoint.type == pointList.PointType.Point:
                 curPoint.x = curPoint.x * constants.PLOTTER_IMAGE_SCALING
                 curPoint.y = curPoint.y * constants.PLOTTER_IMAGE_SCALING
-    return pl
-
     return pl
 
 

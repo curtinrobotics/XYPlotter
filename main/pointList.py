@@ -28,6 +28,9 @@ class Point:
         self.y = y
         self.cat = PointCategory.Unknown
 
+    def __str__(self):
+        return f"{self.type}: {self.x}, {self.y}"
+
 """PointsList - a list of Points"""
 class PointList:
     def __init__(self):
@@ -46,18 +49,25 @@ class PointList:
         self.list.append(newPoint)
 
     """Appends x and y to point list"""
-    def addPoint(self, x, y):
+    def addPoint(self, x: float, y: float):
         newPoint = Point(PointType.Point, x, y)
         self.list.append(newPoint)
 
     """Adds x and y to point list at index"""
-    def addPointIndex(self, x, y, index):
+    def addPointIndex(self, x: float, y: float, index: int):
         newPoint = Point(PointType.Point, x, y)
         self.list.insert(index, newPoint)
 
-    """Appends list of points onto current list"""
-    def extend(self, pList):
-        self.list.extend(pList.list)
+    """Appends list of point objects onto current list"""
+    def extend(self, pList: list[Point]) -> None:
+        self.list.extend(pList)
+
+    """Appends list of float points onto current list"""
+    def extendFloat(self, pList: list[float]) -> None:
+        newList = PointList()
+        for i in range(0, len(pList), 2):
+            newList.addPoint(pList[i], pList[i+1])
+        self.extend(newList.list)
 
     """Removes last point from point list"""
     def removePoint(self):

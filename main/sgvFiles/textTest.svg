@@ -2,8 +2,8 @@
 <body>
 
 <svg height="30" width="200">
-  <text x="0" y="15" fill="red">Hello Wolrd!<text>
-  <path d="M 8,110 L 34,43 62,113 M 53,89 L 16,89">
+  <text x="0" y="15" fill="red">Hello Wolrd!</text>
+  <path d="M 8,110 L 34,43 62,113 M 53,89 L 16,89"/>
 </svg>
  
 </body>
