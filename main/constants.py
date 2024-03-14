@@ -10,12 +10,12 @@ Can be changed with setup.py.
 #       which is used by the gui to determine type of variable
 
 # Print message type flag
-ERROR_OUTPUT = True      # For errors that cause features missing   | type=bool
-WARNING_OUTPUT = True    # For partially implemented features   | type=bool
-DEBUG_OUTPUT = True      # For general debugging    | type=bool
+ERROR_OUTPUT = True      # For errors that cause features missing   | type=bool  log
+WARNING_OUTPUT = True    # For partially implemented features   | type=bool  log
+DEBUG_OUTPUT = True      # For general debugging    | type=bool  log
 
 # File IO
-FILE = "sgvFiles/textTest.svg"   # Source file for plotting
+FILE = "sgvFiles/transformTest.svg"   # Source file for plotting
 
 # Turtle Output
 TURTLE_IMAGE_SCALING = 1  # Scale image to fit screen (>0)  | type=int  min=1   max=10
@@ -35,7 +35,8 @@ PLOTTER_HEIGHT = 300  # Height of plotter drawing area  | type=int  min=1   max=
 CURVE_SAMPLE_POINTS = 100  # Number of sample points on curves  | type=int  min=1   max=1000
 ROUND_DECIMAL_POINTS = 1  # Number of decimal points to round to when culling image points  | type=int  min=0   max=10
 
-# Constants no to be changed
 
 # RESTRICTED
 # ^ Do not change - signifies to setup.py that constants below this are not to be changed
+
+TEMP_LOG_PATH = './logFiles/.tempLog.log'

@@ -319,10 +319,13 @@ class Polyline(Shape):
         return isValid
 
     """Creates points based of attributes of shape"""
+    
     def getPoints(self):
         pl = pointList.PointList()
 
         floatList = _getFloatPoints(self.points)
+
+        print('FloatList rest', floatList[2:])
 
         pl.penUp()
         pl.addPoint(floatList[0], floatList[1])
@@ -363,6 +366,23 @@ class Polygon(Polyline):
         pl.addPoint(floatList[0], floatList[1])
         pl.penDown()
         pl.extendFloat(floatList[2:])
+        pl.addPoint(floatList[0], floatList[1])
+        pl.penUp()
+        return pl
+    def getPoints(self):
+        pl = pointList.PointList()
+
+        floatList = _getFloatPoints(self.points)
+
+        #pl.penUp()
+        #pl.addPoint(floatList[0], floatList[1])
+        #pl.penDown()
+        #for i in range(int(len(floatList[2:])/2)): 
+        #    pl.addPoint(floatList[2+2*i], floatList[3+2*i])
+        #pl.extend(floatList[2:])
+        
+        pl = super().getPoints()
+        pl.penDown()
         pl.addPoint(floatList[0], floatList[1])
         pl.penUp()
         return pl
@@ -591,7 +611,9 @@ class Path(Shape):
                 cmd.yPrev2 = yPrev2
                 cmd.prevIsQuadratic = True
 
+
             # Get points
+            
             curPointList = cmd.getPoints()
             if type(cmd) == shapePath.Move:
                 pl.penUp()
@@ -600,8 +622,10 @@ class Path(Shape):
             pl.extendFloat(curPointList)
 
             # Get previous points
-            xPrev = curPointList[-2]
-            yPrev = curPointList[-1]
+            xPrev = pl.list[-1].x
+            yPrev = pl.list[-1].y
+            #xPrev = curPointList[-2]
+            #yPrev = curPointList[-1]
             prevCmd = "Z"
             if type(cmd) in [shapePath.CubicCurve, shapePath.SmoothCubicCurve]:
                 xPrev2 = cmd.x2[-1]
