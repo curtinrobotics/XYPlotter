@@ -86,7 +86,7 @@ class PointList:
                 y = yPos + ry * math.sin((rad/res)*step + sRad)
                 self.addPoint(x, y)
 
-    """Appends list of points to create path arc"""
+    """Appends list of points to create path arc"""  # TODO: remove
     def drawPathArc(self, xPos1, yPos1, rx, ry, rot, large, sweep, xPos2, yPos2):
         """
         *Note, all inputs are given by svg data\n
@@ -693,7 +693,6 @@ class Vec2D:
     """Converts one type of vector into the other form"""
     def convert(self):
         return self.vec.convert()
-    
 
     
 """Sorts lists with respect to a reference list"""

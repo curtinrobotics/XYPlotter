@@ -1,15 +1,20 @@
-TIMESTAMP:	2023-12-04 12:59:20.165902
+TIMESTAMP:	2024-03-14 19:55:02.352185
 ERROR:	Opening Container "svg" type not found
+DEBUG:	Opening Container "g" being processed
 DEBUG:	Shape "path" being processed
+WARNING:	Attribute "fill" not implemented for "path"
+DEBUG:	Attribute "transform" added to "path"
+WARNING:	Attribute "id" not implemented for "path"
 DEBUG:	Attribute "d" added to "path"
+DEBUG:	Closing Container "g" being processed
+ERROR:	Shape "use" type not found
 ERROR:	Closing Container "svg" type not found
 DEBUG:	
-Working on shape: shape.Path
-DEBUG:	['M 154.0 321.0', 'C 154.0 321.0 497.0 113.0 457.0 452.0', 'S 747.0 431.0 704.0 333.0', 'S 958.0 149.0 887.0 336.0']
-DEBUG:	[('M', [154.0, 321.0]), ('C', [154.0, 321.0, 497.0, 113.0, 457.0, 452.0]), ('S', [747.0, 431.0, 704.0, 333.0]), ('S', [958.0, 149.0, 887.0, 336.0])]
-DEBUG:	Move: [154.0], [321.0]
-DEBUG:	CubicCurve: (154.0, 321.0), ([154.0], [321.0]), ([497.0], [113.0]), ([457.0], [452.0])
-DEBUG:	CubicCurve: (457.0, 452.0), ([417.0], [791.0]), ([747.0], [431.0]), ([704.0], [333.0])
-DEBUG:	CubicCurve: (704.0, 333.0), ([661.0], [235.0]), ([958.0], [149.0]), ([887.0], [336.0])
-DEBUG:	<pointList.PointList object at 0x7f703224ca90>
-DEBUG:	Main reloaded!
+Working on shape: shape.Path (heart)
+DEBUG:	['M 10,30', 'A 20,20 0,0,1 50,30', 'A 20,20 0,0,1 90,30', 'Q 90,60 50,90', 'Q 10,60 10,30', 'z']
+DEBUG:	[('M', [10.0, 30.0]), ('A', [20.0, 20.0, 0.0, 0.0, 1.0, 50.0, 30.0]), ('A', [20.0, 20.0, 0.0, 0.0, 1.0, 90.0, 30.0]), ('Q', [90.0, 60.0, 50.0, 90.0]), ('Q', [10.0, 60.0, 10.0, 30.0]), ('z', [])]
+DEBUG:	Move: [10.0], [30.0]
+DEBUG:	Arc: (10.0, 30.0), ([20.0], [20.0], [0.0]), ([0.0], [1.0]), ([50.0], [30.0])
+DEBUG:	Arc: (50.0, 30.0), ([20.0], [20.0], [0.0]), ([0.0], [1.0]), ([90.0], [30.0])
+DEBUG:	QuadraticCurve: (90.0, 30.0), ([90.0], [60.0]), ([50.0], [90.0])
+DEBUG:	QuadraticCurve: (50.0, 90.0), ([10.0], [60.0]), ([10.0], [30.0])
