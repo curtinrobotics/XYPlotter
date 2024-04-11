@@ -1,20 +1,25 @@
-TIMESTAMP:	2024-03-14 19:55:02.352185
+TIMESTAMP:	2024-04-11 20:13:29.974925
+DEBUG:	SVG DATA: xml
 ERROR:	Opening Container "svg" type not found
-DEBUG:	Opening Container "g" being processed
-DEBUG:	Shape "path" being processed
-WARNING:	Attribute "fill" not implemented for "path"
-DEBUG:	Attribute "transform" added to "path"
-WARNING:	Attribute "id" not implemented for "path"
-DEBUG:	Attribute "d" added to "path"
-DEBUG:	Closing Container "g" being processed
-ERROR:	Shape "use" type not found
+DEBUG:	Shape "rect" being processed
+DEBUG:	Attribute "x" added to "rect"
+DEBUG:	Attribute "y" added to "rect"
+DEBUG:	Attribute "width" added to "rect"
+DEBUG:	Attribute "height" added to "rect"
+WARNING:	Attribute "style" not implemented for "rect"
+DEBUG:	Shape "rect" being processed
+WARNING:	Attribute "id" not implemented for "rect"
+DEBUG:	Attribute "y" added to "rect"
+DEBUG:	Attribute "x" added to "rect"
+DEBUG:	Attribute "rx" added to "rect"
+DEBUG:	Attribute "ry" added to "rect"
+DEBUG:	Attribute "width" added to "rect"
+DEBUG:	Attribute "height" added to "rect"
+WARNING:	Attribute "fill" not implemented for "rect"
+WARNING:	Attribute "stroke" not implemented for "rect"
+WARNING:	Attribute "stroke-width" not implemented for "rect"
 ERROR:	Closing Container "svg" type not found
 DEBUG:	
-Working on shape: shape.Path (heart)
-DEBUG:	['M 10,30', 'A 20,20 0,0,1 50,30', 'A 20,20 0,0,1 90,30', 'Q 90,60 50,90', 'Q 10,60 10,30', 'z']
-DEBUG:	[('M', [10.0, 30.0]), ('A', [20.0, 20.0, 0.0, 0.0, 1.0, 50.0, 30.0]), ('A', [20.0, 20.0, 0.0, 0.0, 1.0, 90.0, 30.0]), ('Q', [90.0, 60.0, 50.0, 90.0]), ('Q', [10.0, 60.0, 10.0, 30.0]), ('z', [])]
-DEBUG:	Move: [10.0], [30.0]
-DEBUG:	Arc: (10.0, 30.0), ([20.0], [20.0], [0.0]), ([0.0], [1.0]), ([50.0], [30.0])
-DEBUG:	Arc: (50.0, 30.0), ([20.0], [20.0], [0.0]), ([0.0], [1.0]), ([90.0], [30.0])
-DEBUG:	QuadraticCurve: (90.0, 30.0), ([90.0], [60.0]), ([50.0], [90.0])
-DEBUG:	QuadraticCurve: (50.0, 90.0), ([10.0], [60.0]), ([10.0], [30.0])
+Working on shape: shape.Rectangle
+DEBUG:	
+Working on shape: shape.Rectangle (myRect)

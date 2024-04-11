@@ -41,6 +41,7 @@ def turtlePlot(pl, gui=False, turt = None, s= None):
     pl = scalePoints(pl, imageScaling, scaledWidth, scaledHeight)
     if constants.DRAW_PLOTTER_SIZE:
         drawPlotterSize(t, scaledWidth, scaledHeight)
+    print(pl.getGCode())
     drawPoints(t, pl)
 
     if not gui: t.screen.mainloop() # Waits for process termination to close the plot
