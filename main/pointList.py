@@ -113,17 +113,33 @@ class PointList:
 
     """Returns list of strings of g-code commands"""  # TODO: make use of point category
     def getGCode(self) -> list[str]:
+        """
+        G-code commands implemented
+        G0 Rapid Linear Move
+            G1 X___ Y___ Z___
+            X: x position
+            Y: y position
+            Z: z position
+        G1 Linear move at feed rate
+            G0 X___ Y___ Z___
+            X: x position
+            Y: y position
+            Z: z position
+
+        XYZ Space
+        Y0 = top of page, Y+ = down (confirm?)
+        X0 = left of page, x+ = right
+        Z0 = pen down, Z1 = pen up
+
+        """
         outList = []
         for curPoint in self.list:
             if curPoint.type == PointType.Point:
-                # G0 = Linear Move
-                outList.append(f"G0 X{curPoint.x:.4f} Y{curPoint.y:.4f}")
-            elif curPoint.type == PointType.Down:
-                # M3/M4 = Head activate
-                outList.append(f"M3 O255")
+                outList.append(f"G1 X{curPoint.x:.4f} Y{curPoint.y:.4f}")
             elif curPoint.type == PointType.Up:
-                # M5 = Head deactivate
-                outList.append("M5")
+                outList.append(f"G1 Z1")
+            elif curPoint.type == PointType.Down:
+                outList.append(f"G1 Z0")
         return outList
 
 """PointMinMax - data structure for holding minimum and maximum points"""
