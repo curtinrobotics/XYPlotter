@@ -6,54 +6,68 @@ Has command line arguments for running in different modes (CLI(default), GUI, LC
 """
 
 # Libraries
-import constants
-import log
-import inputOutput
-import shapeCreation
-import pointCreation
-import importlib
-import subprocess
-tp = importlib.import_module('turtlePlot')
-# from turtlePlot import turtlePlot
-
+import gui
+import pipeline
+import turtlePlot
 import sys
-#import gui
+
+def main():
+    argv = sys.argv
+    argc = len(argv)
+
+    isCli = False
+    isGui = False
+    isHelp = False
+    isError = False
+    errorReason = ""
+
+    # What is in arguments
+    validArgs = ["-c", "--cli", "-g", "--gui", "-h", "--help"]
+    for arg in argv[1:]:
+        if arg not in validArgs:
+            isError = True
+            errorReason = f"Invalid argument: {arg}"
+    if "-c" in argv or "--cli" in argv or argc == 1:
+        isCli = True
+    if "-g" in argv or "--gui" in argv:
+        isGui = True
+    if "-h" in argv or "--help" in argv:
+        isHelp = True
+    if isCli + isGui + isHelp != 1 and not isError:
+        isError = True
+        errorReason = "Invalid combination of arguments"
+
+    # Run depending on arguments
+    if isError:
+        print(errorReason)
+        displayHelp()
+    elif isCli:
+        callCli()
+    elif isGui:
+        callGui()
+    elif isHelp:
+        displayHelp()
 
 
-
-gui = False
-
-print("\n--== SVG Processing Tool v.alpha ==--\n")
-print('name is:', __name__)
-
-if len(sys.argv) > 1 and sys.argv[1] == 'gui':
-    
-    tempLogFile = './logFiles/.tempLog.log'
-    gui = True
-    #inputOutput.appendFileData(tempLogFile, str(log.log.dLog))
-    #print('log is ->', log.log)
-    #inputOutput.writeFileData(tempLogFile, str(log.log))
+def displayHelp():
+    print("Usage: python main.py [OPTIONS]")
+    print()
+    print("  -c, --cli          Run program in CLI mode. (default)")
+    print("  -g, --gui          Run program in GUI mode.")
+    print("  -h, --help         Show this message and exit.")
 
 
-# Setup debug log
-#if sys.argv[1] != 'gui': log.createLog()
-log.createLog()
+def callCli():
+    print("\n--== SVG Processing Tool v.alpha ==--\n")
+    pointList = pipeline.pipeline()
+    turtlePlot.turtlePlot(pointList)
 
-# Import svg file
-importlib.reload(constants)
-svgData = inputOutput.readFileData(constants.FILE)
 
-# Create shapes from file data
-shapeList = shapeCreation.shapeCreation(svgData)
+def callGui():
+    print("\n--== SVG Processing Tool v.alpha ==--\n")
+    newGui = gui.GUI()
+    newGui.mainloop()
 
-# Create points from shape data
-pointList = pointCreation.pointCreation(shapeList)
 
 if __name__ == '__main__':
-    # Plot Points
-    #subprocess.run(['python3', 'turtlePlot.py'])
-    turt, s = tp.createVars()
-    if not gui: tp.turtlePlot(pointList, gui=gui, turt=turt, s=s)
-
-elif __name__ == 'main':
-    print('was imported')
+    main()

@@ -4,10 +4,13 @@
 
 // Libraries
 #include "Command.h"
+#include "Motors.h"
+#include "constants.h"
+
+Motors motors;
 
 void setup()
 {
-  // put your setup code here, to run once:
   Serial.begin(9600);
   Serial.println("Program Start!\n");
 }
@@ -37,11 +40,18 @@ void loop() {
 
     Command cmdObj(str);
 
-    Serial.println(cmdObj.validateCommandString());
-    Serial.println(cmdObj.X);
-    Serial.println(cmdObj.Y);
-    Serial.println(cmdObj.Z);
-    Serial.println();
+    Serial.print("Command (");
+    Serial.print(cmdObj.validateCommandString());
+    Serial.print(") X: ");
+    Serial.print(cmdObj.X);
+    Serial.print(" Y: ");
+    Serial.print(cmdObj.Y);
+    Serial.print(" Z: ");
+    Serial.print(cmdObj.Z);
+    Serial.println("\n");
+
+    // Send command to motors
+    motors.move(cmdObj.X, cmdObj.Y, cmdObj.Z);
 
     //free(cmd);
   } 

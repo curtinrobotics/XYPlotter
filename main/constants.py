@@ -15,7 +15,7 @@ WARNING_OUTPUT = True    # For partially implemented features   | type=bool  log
 DEBUG_OUTPUT = True      # For general debugging    | type=bool  log
 
 # File IO
-FILE = "sgvFiles/rectangleTest.svg"   # Source file for plotting
+FILE = "sgvFiles/circleTest.svg"   # Source file for plotting
 
 # Turtle Output
 TURTLE_IMAGE_SCALING = 1  # Scale image to fit screen (>0)  | type=int  min=1   max=10

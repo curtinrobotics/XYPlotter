@@ -22,6 +22,7 @@ import importlib
 from turtle import ScrolledCanvas, RawTurtle, TurtleScreen
 import turtlePlot
 import importlib
+import pipeline
 
 class GUI(tk.Tk):
     def __init__(self):
@@ -247,18 +248,8 @@ class MainFrame(tk.Frame):
 
         # Run main.py
         try:
-            #subprocess.run(['python3', 'main.py', 'gui']
-            #import main
-            try:
-                importlib.reload(self.main)
-                io.printd('Main reloaded!')
-            except AttributeError:
-                self.main = importlib.import_module('main')
-
-            #main = importlib.import_module('main')
-            self.main.tp.turtlePlot(self.main.pointList, gui=True, turt=self.turtle, s=self.screen)
-            #global logContents
-            #logContents = log.log.dLog
+            pointList = pipeline.pipeline()
+            turtlePlot.turtlePlot(pointList, gui=True, turt=self.turtle, screen=self.screen)
         except Exception as e:
             print(e)
 

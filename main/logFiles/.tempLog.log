@@ -1,25 +1,12 @@
-TIMESTAMP:	2024-04-11 20:13:29.974925
-DEBUG:	SVG DATA: xml
+TIMESTAMP:	2024-05-16 21:00:39.611892
 ERROR:	Opening Container "svg" type not found
-DEBUG:	Shape "rect" being processed
-DEBUG:	Attribute "x" added to "rect"
-DEBUG:	Attribute "y" added to "rect"
-DEBUG:	Attribute "width" added to "rect"
-DEBUG:	Attribute "height" added to "rect"
-WARNING:	Attribute "style" not implemented for "rect"
-DEBUG:	Shape "rect" being processed
-WARNING:	Attribute "id" not implemented for "rect"
-DEBUG:	Attribute "y" added to "rect"
-DEBUG:	Attribute "x" added to "rect"
-DEBUG:	Attribute "rx" added to "rect"
-DEBUG:	Attribute "ry" added to "rect"
-DEBUG:	Attribute "width" added to "rect"
-DEBUG:	Attribute "height" added to "rect"
-WARNING:	Attribute "fill" not implemented for "rect"
-WARNING:	Attribute "stroke" not implemented for "rect"
-WARNING:	Attribute "stroke-width" not implemented for "rect"
+DEBUG:	Shape "circle" being processed
+DEBUG:	Attribute "cx" added to "circle"
+DEBUG:	Attribute "cy" added to "circle"
+DEBUG:	Attribute "r" added to "circle"
+WARNING:	Attribute "stroke" not implemented for "circle"
+WARNING:	Attribute "stroke-width" not implemented for "circle"
+WARNING:	Attribute "fill" not implemented for "circle"
 ERROR:	Closing Container "svg" type not found
 DEBUG:	
-Working on shape: shape.Rectangle
-DEBUG:	
-Working on shape: shape.Rectangle (myRect)
+Working on shape: shape.Circle
